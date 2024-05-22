@@ -49,6 +49,37 @@ std::vector< std::vector<double> > Portfolio::calculateCovarianceMatrix() {
     return covarianceMatrix;
 }
 
+// Print Covariance Matrix
+void Portfolio::printCovMatrix()
+{
+    try
+    {
+        if (covarianceMatrix.empty())
+        {
+            std::cerr << "Covariance matrix is empty." << std::endl;
+            return;
+        }
+        std::cout << "Covariance Matrix:" << std::endl;
+        for (const auto& row : covarianceMatrix)
+        {
+            if (row.empty())
+            {
+                std::cerr << "Covariance matrix contains an empty row." << std::endl;
+                return;
+            }
+            for (const auto& value : row)
+            {
+                std::cout << value << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+    }
+}
+
 // solve Optimization Problem by creating the System of Linear Equations needed for Conjugate Gradient Method
 std::vector<double> Portfolio::solveOptimization()
 {

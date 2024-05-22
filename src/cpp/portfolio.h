@@ -14,6 +14,7 @@ public:
     std::vector<double> calculateMeanReturn(); // Function to calculate
     std::vector< std::vector<double> > calculateCovarianceMatrix(); // function to calculate Covariance Matrix
     std::vector<double> solveOptimization(); // Function to create Qx = b systems of linear equations
+    void printCovMatrix();
 
 private:
     std::vector< std::vector<double> > returns; // Matrix to Store Returns

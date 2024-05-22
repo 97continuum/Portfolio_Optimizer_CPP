@@ -86,3 +86,11 @@ std::vector<std::vector<double>> convertToVectorMatrix(double **returnMatrix, in
 
     return vectorMatrix;
 }
+
+void deleteDoublePointer(double** matrix, int numberRows) {
+    for (int i = 0; i < numberRows; ++i) {
+        delete[] matrix[i];
+    }
+    delete[] matrix;
+    std::cout << "Deleted Memory" << std::endl;
+}
