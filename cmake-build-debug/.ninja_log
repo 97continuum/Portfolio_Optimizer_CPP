@@ -55,3 +55,9 @@
 356	391	1716375014404739023	Portfolio_Optimizer_CPP	9c5bf895b43062e5
 6	370	1716375051836448618	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
 370	408	1716375051875906675	Portfolio_Optimizer_CPP	9c5bf895b43062e5
+6	577	1716376332353477970	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
+577	630	1716376332410137660	Portfolio_Optimizer_CPP	9c5bf895b43062e5
+6	391	1716381415737935334	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/portfolio.cpp.o	5e697c4774e4e74c
+6	403	1716381415750339053	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
+6	419	1716381415766300918	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/read_data.cpp.o	3185501b3152611
+419	463	1716381415813400143	Portfolio_Optimizer_CPP	9c5bf895b43062e5

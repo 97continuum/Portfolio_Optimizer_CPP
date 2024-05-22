@@ -49,8 +49,7 @@ std::vector< std::vector<double> > Portfolio::calculateCovarianceMatrix() {
     return covarianceMatrix;
 }
 
-// solve Optimization Problem by creating the System of Linear Equations needed
-// for Conjugate Gradient Method
+// solve Optimization Problem by creating the System of Linear Equations needed for Conjugate Gradient Method
 std::vector<double> Portfolio::solveOptimization()
 {
     //size_t n = meanReturns.size(); // number of Assets

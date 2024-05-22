@@ -16,24 +16,12 @@
 
 int  main (int  argc, char  *argv[])
 {
+    std::string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
+    changeWorkingDirectory(desiredDirectory); // Change to Correct Working Directory
     // Initialize Variables
     int numberAssets = 83; // Initialize Number of Assets
     int numberReturns = 700; // Max Length of Returns Data
     double **returnMatrix = new double*[numberAssets]; // a matrix to store the return data
-
-    // Make sure the compiler can find the data
-    std::string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
-
-    if (changeWorkingDirectory(desiredDirectory))
-    {
-        std::cout << "Successfully changed working directory to: " << desiredDirectory << std::endl;
-    }
-    else
-    {
-        std::cerr << "Failed to change working directory to: " << desiredDirectory << std::endl;
-        return 1;
-    }
-
     //allocate memory for return data
     for(int i=0;i<numberAssets;i++)
         returnMatrix[i]=new double[numberReturns];
@@ -60,13 +48,16 @@ int  main (int  argc, char  *argv[])
     // Test Linear Algebra Functions
     //testAllFunctions();
 
+    // Instantiate Portfolio Object
+    double targetReturns = 0.10;
+    Portfolio portfolio(returns, targetReturns, 10, numberReturns);
+
     std::cout << "Checking if both meanReturn and covariance matrix function are calculated correctly" << std::endl;
 
     std::cout << "Parameter Estimation Script:" << std::endl;
     std::cout << " =========================== " << std::endl;
     std::cout << "Mean Return Calculation for First 10 Assets" << std::endl;
-    int inSampleSize = 700;
-    std::vector<double> meanReturns = calculateMean(returnMatrix, 10, inSampleSize);
+    std::vector<double> meanReturns = calculateMean(returnMatrix, 10, numberReturns);
     std::cout << "Mean Returns: " << std::endl;
     for (double mean: meanReturns)
         {
@@ -77,9 +68,6 @@ int  main (int  argc, char  *argv[])
     std::cout << "Portfolio Class Method:" << std::endl;
     std::cout << " =========================== " << std::endl;
     std::cout << "Mean Return Calculation for First 10 Assets" << std::endl;
-
-    double targetReturns = 0.10;
-    Portfolio portfolio(returns, targetReturns, 10, inSampleSize);
 
     // Calculate mean returns
     std::vector<double> portfolioMeanReturns = portfolio.calculateMeanReturn();
@@ -93,7 +81,7 @@ int  main (int  argc, char  *argv[])
     std::cout << "Parameter Estimation Script:" << std::endl;
     std::cout << " =========================== " << std::endl;
     std::cout << "Covariance Matrix Calculation for First 10 Assets" << std::endl;
-    std::vector< std::vector<double> > covarianceMatrix = calculateCovarianceMatrix(returnMatrix, 10, inSampleSize);
+    std::vector< std::vector<double> > covarianceMatrix = calculateCovarianceMatrix(returnMatrix, 10, numberReturns);
     std::cout << "CovarianceMatrix" << std::endl;
     for (const auto& row: covarianceMatrix)
     {
@@ -118,7 +106,7 @@ int  main (int  argc, char  *argv[])
         std::cout << std::endl;
     }
 
-    // Delete Memory
+    // Delete Memory from Double Pointer
     for(int i=0;i<numberAssets;i++)
         delete[] returnMatrix[i];
     delete[] returnMatrix;

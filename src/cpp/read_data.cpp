@@ -41,11 +41,17 @@ void readData(double **data, const std::string& fileName) {
 }
 
 bool changeWorkingDirectory(const std::string& newDir) {
-    if (chdir(newDir.c_str()) != 0) {
+    if (chdir(newDir.c_str()) != 0)
+    {
         perror("chdir() error");
+        std::cerr << "Failed to change working directory to: " << newDir << std::endl;
         return false;
     }
-    return true;
+    else
+    {
+        std::cout << "Successfully changed working directory to: " << newDir << std::endl;
+        return true;
+    }
 }
 
 bool checkFileInCurrentDirectory(const std::string& fileName) {
