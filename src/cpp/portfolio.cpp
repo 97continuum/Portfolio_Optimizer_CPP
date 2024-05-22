@@ -49,37 +49,6 @@ std::vector< std::vector<double> > Portfolio::calculateCovarianceMatrix() {
     return covarianceMatrix;
 }
 
-// Print Covariance Matrix
-void Portfolio::printCovMatrix()
-{
-    try
-    {
-        if (covarianceMatrix.empty())
-        {
-            std::cerr << "Covariance matrix is empty." << std::endl;
-            return;
-        }
-        std::cout << "Covariance Matrix:" << std::endl;
-        for (const auto& row : covarianceMatrix)
-        {
-            if (row.empty())
-            {
-                std::cerr << "Covariance matrix contains an empty row." << std::endl;
-                return;
-            }
-            for (const auto& value : row)
-            {
-                std::cout << value << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Exception caught: " << e.what() << std::endl;
-    }
-}
-
 // solve Optimization Problem by creating the System of Linear Equations needed for Conjugate Gradient Method
 std::vector<double> Portfolio::solveOptimization()
 {
@@ -100,10 +69,11 @@ std::vector<double> Portfolio::solveOptimization()
         Q[numAssets][i] = -meanReturns[i];
         Q[numAssets+1][i] = -1.0;
     }
-
+    printMatrix(Q, "Q");
     // Fill b vector
     b[numAssets] = -targetReturn;
     b[numAssets+1] = -1.0;
+    printVector(b, "b");
 
     // Solve for Qx = b by Conjugate Method
     return conjugateGradient(Q, b, x0);
@@ -111,26 +81,38 @@ std::vector<double> Portfolio::solveOptimization()
 
 std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<double>> &Q,
                                                  const std::vector<double> &b,
-                                                 const std::vector<double> &x0)
+                                                 const std::vector<double> &x0) const
 {
     //size_t n = b.size();
     std::vector<double> x = x0;
+    printVector(x, "x");
     std::vector<double> s = vectorSubtraction(b, matrixVectorMultiplication(Q, x0)); // s: b - Qx
+    printVector(s, "s");
     std::vector<double> p = s; // set Initial Direction
+    printVector(p, "p");
     double sTs = vectorDotProduct(s, s);
+    std::cout << "sTs : " << sTs << std::endl;
 
     for (size_t i=0; i < numAssets; ++i)
     {
         double alpha = sTs / (vectorDotProduct(p, matrixVectorMultiplication(Q, p))); // step size
+        std::cout << "alpha" << alpha << std::endl;
         x = vectorAddition(x, scalarMultiplication(p, alpha));
+        printVector(x, "x");
         s = vectorSubtraction(s, scalarMultiplication(p, alpha));
+        printVector(s, "s");
         double sTsNew = vectorDotProduct(s, s);
+        std::cout << "sTsNew " << sTsNew << std::endl;
         if (sTsNew < 1.0E-6)
         {
+            std::cout << "sTsNew less than epsilon threshold - breaking out from code" << std::endl;
             break;
         }
         p = vectorAddition(s, scalarMultiplication(p, sTsNew/sTs));
+        printVector(p, "p");
         sTs = sTsNew;
+        std::cout << "sTs : " << sTs << std::endl;
     }
+    std::cout << "Finished Optimization" << std::endl;
     return x;
 }

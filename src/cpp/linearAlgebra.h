@@ -8,6 +8,8 @@
 #include <iostream>
 #include "vector"
 
+void printMatrix(const std::vector< std::vector<double> >& matrix, std::string matrixName);
+void printVector(const std::vector< double >& vector, std::string vectorName);
 std::vector<double> vectorAddition(const std::vector<double>& a, const std::vector<double>& b);
 std::vector<double> vectorSubtraction(const std::vector<double>& a, const std::vector<double>& b);
 double vectorDotProduct(const std::vector<double>& a, const std::vector<double>& b);

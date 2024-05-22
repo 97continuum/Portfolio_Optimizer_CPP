@@ -9,7 +9,6 @@
 #include <sstream>
 #include "csv.h"
 #include "read_data.h"
-#include "parameter_estimation.h"
 #include "linearAlgebra.h"
 #include "unitTests.h"
 #include "portfolio.h"
@@ -37,11 +36,14 @@ int  main (int  argc, char  *argv[])
 
     // Instantiate Portfolio Object
     double targetReturns = 0.10;
-    Portfolio portfolio(returns, targetReturns, 10, numberReturns);
+    Portfolio portfolio(returns, targetReturns, 2, numberReturns);
 
     std::vector<double> portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns
     std::vector< std::vector<double> > portfolioCovMatrix = portfolio.calculateCovarianceMatrix(); // Calculate Cov Matrix
-    portfolio.printCovMatrix(); // Print Covariance Matrix
+    //printMatrix(portfolioCovMatrix); // Print Covariance Matrix
+
+    std::vector<double> weights = portfolio.solveOptimization();
+    printVector(weights, "Weights");
 
     // Delete Memory from Double Pointer
     deleteDoublePointer(returnMatrix, numberAssets);

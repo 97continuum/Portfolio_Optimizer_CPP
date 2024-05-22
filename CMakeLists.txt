@@ -10,8 +10,6 @@ add_executable(Portfolio_Optimizer_CPP
         src/cpp/linearAlgebra.cpp
         src/cpp/linearAlgebra.h
         src/cpp/main.cpp
-        src/cpp/parameter_estimation.cpp
-        src/cpp/parameter_estimation.h
         src/cpp/portfolio.cpp
         src/cpp/portfolio.h
         src/cpp/read_data.cpp

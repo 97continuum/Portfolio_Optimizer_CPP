@@ -4,6 +4,61 @@
 #include "linearAlgebra.h"
 #include <vector>
 
+// Print Matrix
+// Print Covariance Matrix
+void printMatrix(const std::vector< std::vector<double> >& matrix, std::string matrixName)
+{
+    try
+    {
+        if (matrix.empty())
+        {
+            std::cerr << "Matrix is empty." << std::endl;
+            return;
+        }
+        std::cout << "Matrix: " << matrixName << std::endl;
+        for (const auto& row : matrix)
+        {
+            if (row.empty())
+            {
+                std::cerr << "Matrix " << matrixName << "contains an empty row." << std::endl;
+                return;
+            }
+            for (const auto& value : row)
+            {
+                std::cout << value << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+    }
+}
+
+// Print Vector
+void printVector(const std::vector< double >& vector, std::string vectorName)
+{
+    try
+    {
+        if (vector.empty())
+        {
+            std::cerr << "Vector" << vectorName << "is empty" << std::endl;
+            return;
+        }
+        std::cout << "Vector " << vectorName << std::endl;
+        for (const auto& value : vector)
+        {
+            std::cout << value << " ";
+        }
+        std::cout << std::endl;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Except caught: " << e.what() << std::endl;
+    }
+}
+
 // Vector Addition
 std::vector<double> vectorAddition(const std::vector<double>& a, const std::vector<double>& b)
 {
