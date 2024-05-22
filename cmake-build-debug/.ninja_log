@@ -1,0 +1,16 @@
+# ninja log v5
+0	269	1716370735468465858	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/parameter_estimation.cpp.o	371e9a307e82768c
+0	341	1716370735539682619	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/linearAlgebra.cpp.o	7081a860367da2f3
+0	344	1716370735543931999	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/csv.cpp.o	b61e36c0ecca6c0e
+1	361	1716370735560819522	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/unitTests.cpp.o	22fc411436c396ee
+0	367	1716370735567012613	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/portfolio.cpp.o	5e697c4774e4e74c
+0	384	1716370735583999761	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
+0	401	1716370735600381824	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/read_data.cpp.o	3185501b3152611
+401	437	1716370735638775958	Portfolio_Optimizer_CPP	9c5bf895b43062e5
+6	349	1716370788936628761	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
+349	385	1716370788974683395	Portfolio_Optimizer_CPP	9c5bf895b43062e5
+6	350	1716370794476587012	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
+350	384	1716370794512931851	Portfolio_Optimizer_CPP	9c5bf895b43062e5
+6	455	1716371313087206564	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
+6	464	1716371313097118744	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/read_data.cpp.o	3185501b3152611
+464	509	1716371313144315682	Portfolio_Optimizer_CPP	9c5bf895b43062e5

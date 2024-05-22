@@ -20,6 +20,15 @@ int  main (int  argc, char  *argv[])
     int numberReturns = 700; // Max Length of Returns Data
     double **returnMatrix = new double*[numberAssets]; // a matrix to store the return data
 
+    std::string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
+
+    if (changeWorkingDirectory(desiredDirectory)) {
+        std::cout << "Successfully changed working directory to: " << desiredDirectory << std::endl;
+    } else {
+        std::cerr << "Failed to change working directory to: " << desiredDirectory << std::endl;
+        return 1;
+    }
+
     //allocate memory for return data
     for(int i=0;i<numberAssets;i++)
         returnMatrix[i]=new double[numberReturns];
@@ -27,7 +36,7 @@ int  main (int  argc, char  *argv[])
     cout << "Reading Data" << std::endl;
 
     //read the data from the file and store it into the return matrix
-    std::string fileName = "asset_returns.csv";
+    std::string fileName = "data/cpp/asset_returns.csv";
     checkFileInCurrentDirectory(fileName); // Check if File Exists and File Path is correct
     readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
 

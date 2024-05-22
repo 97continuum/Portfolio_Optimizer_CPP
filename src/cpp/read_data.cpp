@@ -45,11 +45,19 @@ void readData(double **data,const string& fileName)
     }
 }
 
+bool changeWorkingDirectory(const std::string& newDir) {
+    if (chdir(newDir.c_str()) != 0) {
+        perror("chdir() error");
+        return false;
+    }
+    return true;
+}
+
 bool checkFileInCurrentDirectory(const std::string& fileName)
 {
     // Print the current working directory
     char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+    if (getcwd(cwd, sizeof(cwd)) != nullptr) {
         std::cout << "Current working dir: " << cwd << std::endl;
     } else {
         perror("getcwd() error");
@@ -58,7 +66,6 @@ bool checkFileInCurrentDirectory(const std::string& fileName)
 
     // Construct the full path to the file
     std::string fullPath = std::string(cwd) + "/" + fileName;
-
     // Check if the file exists
     std::ifstream file(fullPath);
     if (!file)
