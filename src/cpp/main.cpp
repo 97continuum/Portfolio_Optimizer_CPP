@@ -16,15 +16,20 @@
 
 int  main (int  argc, char  *argv[])
 {
+    // Initialize Variables
     int numberAssets = 83; // Initialize Number of Assets
     int numberReturns = 700; // Max Length of Returns Data
     double **returnMatrix = new double*[numberAssets]; // a matrix to store the return data
 
+    // Make sure the compiler can find the data
     std::string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
 
-    if (changeWorkingDirectory(desiredDirectory)) {
+    if (changeWorkingDirectory(desiredDirectory))
+    {
         std::cout << "Successfully changed working directory to: " << desiredDirectory << std::endl;
-    } else {
+    }
+    else
+    {
         std::cerr << "Failed to change working directory to: " << desiredDirectory << std::endl;
         return 1;
     }
@@ -36,33 +41,42 @@ int  main (int  argc, char  *argv[])
     cout << "Reading Data" << std::endl;
 
     //read the data from the file and store it into the return matrix
-    std::string fileName = "data/cpp/asset_returns.csv";
+    std::string fileName = "data/asset_returns.csv";
     checkFileInCurrentDirectory(fileName); // Check if File Exists and File Path is correct
-    readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
 
+    try {
+        // Attempt to read the file
+        std::cout << "Attempting to Open the File to read through it" << std::endl;
+        readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
+
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+    }
+
+    std::cout << "Converting to returnMatrix to vector" << std::endl;
     // Convert to vector of vectors
     std::vector<std::vector<double>> returns = convertToVectorMatrix(returnMatrix, numberAssets, numberReturns);
-
+    std::cout << "Converted to vector successfully" << std::endl;
     // Test Linear Algebra Functions
     //testAllFunctions();
 
     std::cout << "Checking if both meanReturn and covariance matrix function are calculated correctly" << std::endl;
 
-    std::cout << "Parameter Estimation Script:";
-    std::cout << " =========================== ";
-    std::cout << "Mean Return Calculation for First 10 Assets";
+    std::cout << "Parameter Estimation Script:" << std::endl;
+    std::cout << " =========================== " << std::endl;
+    std::cout << "Mean Return Calculation for First 10 Assets" << std::endl;
     int inSampleSize = 700;
     std::vector<double> meanReturns = calculateMean(returnMatrix, 10, inSampleSize);
     std::cout << "Mean Returns: " << std::endl;
     for (double mean: meanReturns)
         {
-            std::cout << mean << " ,";
+            std::cout << mean << " ";
         }
     std::cout << std::endl;
 
-    std::cout << "Portfolio Class Method:";
-    std::cout << " =========================== ";
-    std::cout << "Mean Return Calculation for First 10 Assets";
+    std::cout << "Portfolio Class Method:" << std::endl;
+    std::cout << " =========================== " << std::endl;
+    std::cout << "Mean Return Calculation for First 10 Assets" << std::endl;
 
     double targetReturns = 0.10;
     Portfolio portfolio(returns, targetReturns, 10, inSampleSize);
@@ -76,9 +90,9 @@ int  main (int  argc, char  *argv[])
     std::cout << std::endl;
 
 
-    std::cout << "Parameter Estimation Script:";
-    std::cout << " =========================== ";
-    std::cout << "Covariance Matrix Calculation for First 10 Assets";
+    std::cout << "Parameter Estimation Script:" << std::endl;
+    std::cout << " =========================== " << std::endl;
+    std::cout << "Covariance Matrix Calculation for First 10 Assets" << std::endl;
     std::vector< std::vector<double> > covarianceMatrix = calculateCovarianceMatrix(returnMatrix, 10, inSampleSize);
     std::cout << "CovarianceMatrix" << std::endl;
     for (const auto& row: covarianceMatrix)
@@ -90,9 +104,9 @@ int  main (int  argc, char  *argv[])
         std::cout << std::endl;
     }
 
-    std::cout << "Portfolio Class Method:";
-    std::cout << " =========================== ";
-    std::cout << "Covariance Matrix Calculation for First 10 Assets";
+    std::cout << "Portfolio Class Method:" << std::endl;
+    std::cout << " =========================== " << std::endl;
+    std::cout << "Covariance Matrix Calculation for First 10 Assets" << std::endl;
     std::vector< std::vector<double> > portfolioCovMatrix = portfolio.calculateCovarianceMatrix();
     std::cout << "Covariance Matrix:" << std::endl;
     for (const auto& row: portfolioCovMatrix)
