@@ -96,7 +96,7 @@ std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<d
     for (size_t i=0; i < numAssets; ++i)
     {
         double alpha = sTs / (vectorDotProduct(p, matrixVectorMultiplication(Q, p))); // step size
-        std::cout << "alpha" << alpha << std::endl;
+        std::cout << "alpha " << alpha << std::endl;
         x = vectorAddition(x, scalarMultiplication(p, alpha));
         printVector(x, "x");
         s = vectorSubtraction(s, scalarMultiplication(p, alpha));
