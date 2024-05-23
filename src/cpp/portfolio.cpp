@@ -7,6 +7,9 @@
 #include <numeric>
 #include <iostream>
 #include "linearAlgebra.h"
+#include "math.h"
+
+const double NEARZERO = 1.0e-10;
 
 // Constructor for Portfolio Class
 Portfolio::Portfolio(const std::vector<std::vector<double>> &returns, double targetReturn, int numAssets, int numPeriods)
@@ -83,7 +86,7 @@ std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<d
                                                  const std::vector<double> &b,
                                                  const std::vector<double> &x0) const
 {
-    //size_t n = b.size();
+    size_t n = b.size();
     std::vector<double> x = x0;
     printVector(x, "x");
     std::vector<double> s = vectorSubtraction(b, matrixVectorMultiplication(Q, x0)); // s: b - Qx
@@ -93,26 +96,40 @@ std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<d
     double sTs = vectorDotProduct(s, s);
     std::cout << "sTs : " << sTs << std::endl;
 
-    for (size_t i=0; i < numAssets; ++i)
+    for (size_t k = 0; k < n; ++k)
     {
-        double alpha = sTs / (vectorDotProduct(p, matrixVectorMultiplication(Q, p))); // step size
+        std::vector<double> Qp = matrixVectorMultiplication(Q, p);
+        printVector(Qp, "Q*p");
+        double pTQp = vectorDotProduct(p, Qp);
+        std::cout << "Dot Product " << pTQp << std::endl;
+
+        if (std::abs(pTQp) < 1e-10) {
+            std::cerr << "Division by nearly zero in alpha computation, terminating algorithm." << std::endl;
+            break;
+        }
+
+        double alpha = sTs / pTQp; // step size
         std::cout << "alpha " << alpha << std::endl;
         x = vectorAddition(x, scalarMultiplication(p, alpha));
         printVector(x, "x");
-        s = vectorSubtraction(s, scalarMultiplication(p, alpha));
+        std::vector<double> alphaQp = scalarMultiplication(Qp, alpha);
+        s = vectorSubtraction(s, alphaQp);
         printVector(s, "s");
         double sTsNew = vectorDotProduct(s, s);
         std::cout << "sTsNew " << sTsNew << std::endl;
-        if (sTsNew < 1.0E-6)
-        {
+
+        if (sTsNew < 1.0E-6) {
             std::cout << "sTsNew less than epsilon threshold - breaking out from code" << std::endl;
             break;
         }
-        p = vectorAddition(s, scalarMultiplication(p, sTsNew/sTs));
+
+        double beta = sTsNew / sTs;
+        p = vectorAddition(s, scalarMultiplication(p, beta));
         printVector(p, "p");
         sTs = sTsNew;
         std::cout << "sTs : " << sTs << std::endl;
     }
+
     std::cout << "Finished Optimization" << std::endl;
     return x;
 }

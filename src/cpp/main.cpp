@@ -19,15 +19,15 @@ int  main (int  argc, char  *argv[])
     changeWorkingDirectory(desiredDirectory); // Change to Correct Working Directory
 
     // Initialize Variables
-    int numberAssets = 83; // Initialize Number of Assets
-    int numberReturns = 700; // Max Length of Returns Data
+    int numberAssets = 10; // Initialize Number of Assets
+    int numberReturns = 10; // Max Length of Returns Data
     auto **returnMatrix = new double*[numberAssets]; // a matrix to store the return data
     //allocate memory for return data
     for(int i=0;i<numberAssets;i++)
         returnMatrix[i]=new double[numberReturns];
 
     //read the data from the file and store it into the return matrix
-    std::string fileName = "data/asset_returns.csv";
+    std::string fileName = "data/asset_returns_small.csv";
     checkFileInCurrentDirectory(fileName); // Check if File Exists and File Path is correct
     readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
     // Convert to vector of vectors
@@ -35,8 +35,8 @@ int  main (int  argc, char  *argv[])
     //testAllFunctions(); // Test Linear Algebra Functions
 
     // Instantiate Portfolio Object
-    double targetReturns = 0.10;
-    Portfolio portfolio(returns, targetReturns, 2, numberReturns);
+    double targetReturns = 0.5;
+    Portfolio portfolio(returns, targetReturns, numberAssets, numberReturns);
 
     std::vector<double> portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns
     std::vector< std::vector<double> > portfolioCovMatrix = portfolio.calculateCovarianceMatrix(); // Calculate Cov Matrix

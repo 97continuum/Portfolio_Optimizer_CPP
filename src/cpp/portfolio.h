@@ -14,6 +14,9 @@ public:
     std::vector<double> calculateMeanReturn(); // Function to calculate
     std::vector< std::vector<double> > calculateCovarianceMatrix(); // function to calculate Covariance Matrix
     std::vector<double> solveOptimization(); // Function to create Qx = b systems of linear equations
+    std::vector<double> conjugateGradient(const std::vector<std::vector<double>> &Q,
+                                          const std::vector<double> &b,
+                                          const std::vector<double> &x0) const; // Function to solve Qx = b equation
 
 private:
     std::vector< std::vector<double> > returns; // Matrix to Store Returns
@@ -22,8 +25,6 @@ private:
     int numPeriods; // Total Number of Periods
     std::vector<double> meanReturns; // The vector of Mean Returns for N Assets
     std::vector< std::vector<double> > covarianceMatrix; // Variance Covariance Matrix for N Assets
-    std::vector<double> conjugateGradient(const std::vector<std::vector<double>> &Q, const std::vector<double> &b,
-                                          const std::vector<double> &x0) const; // Function to solve Qx = b equation
 };
 
 
