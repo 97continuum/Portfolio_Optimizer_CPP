@@ -19,7 +19,7 @@ int  main (int  argc, char  *argv[])
     changeWorkingDirectory(desiredDirectory); // Change to Correct Working Directory
 
     // Initialize Variables
-    int numberAssets = 10; // Initialize Number of Assets
+    int numberAssets = 5; // Initialize Number of Assets
     int numberReturns = 10; // Max Length of Returns Data
     auto **returnMatrix = new double*[numberAssets]; // a matrix to store the return data
     //allocate memory for return data
@@ -39,8 +39,9 @@ int  main (int  argc, char  *argv[])
     Portfolio portfolio(returns, targetReturns, numberAssets, numberReturns);
 
     std::vector<double> portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns
+    printVector(portfolioMeanReturns, "Mean Returns");
     std::vector< std::vector<double> > portfolioCovMatrix = portfolio.calculateCovarianceMatrix(); // Calculate Cov Matrix
-    //printMatrix(portfolioCovMatrix); // Print Covariance Matrix
+    printMatrix(portfolioCovMatrix, "Cov Matrix"); // Print Covariance Matrix
 
     std::vector<double> weights = portfolio.solveOptimization();
     printVector(weights, "Weights");
