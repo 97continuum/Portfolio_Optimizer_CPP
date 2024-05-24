@@ -10,7 +10,6 @@
 #include "csv.h"
 #include "read_data.h"
 #include "linearAlgebra.h"
-#include "unitTests.h"
 #include "portfolio.h"
 
 int  main (int  argc, char  *argv[])
@@ -33,8 +32,31 @@ int  main (int  argc, char  *argv[])
     // Convert to vector of vectors
     std::vector<std::vector<double>> returns = convertToVectorMatrix(returnMatrix, numberAssets, numberReturns);
 
-    // Instantiate Portfolio Object
-    double targetReturns = 0.05;
+    // Set target Portfolio Returns
+    const int size = 20;
+    double temp[size];
+
+    for (int i = 0; i < size; ++i) {
+        temp[i] = 0.005 + i * 0.005;
+    }
+
+    std::vector<double> tReturns(temp, temp + size);
+
+    for (double value : tReturns) {
+        std::cout << value << " ";
+    }
+
+    // Backtesting Parameters
+    int isWindow = 100;
+    int oosWindow = 12;
+    int slidingWindow = 12;
+    int numOfSlidingWindows = int()(numberReturns - isWindow - oosWindow) / (slidingWindow + 1);
+
+
+
+    std::vector<double> tReturns(temp, temp + size);
+
+
     Portfolio portfolio(returns, targetReturns, numberAssets, numberReturns);
     std::vector<double> portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns
     //printVector(portfolioMeanReturns, "Mean Returns");

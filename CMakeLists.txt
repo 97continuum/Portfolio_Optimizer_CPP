@@ -14,5 +14,4 @@ add_executable(Portfolio_Optimizer_CPP
         src/cpp/portfolio.h
         src/cpp/read_data.cpp
         src/cpp/read_data.h
-        src/cpp/unitTests.cpp
-        src/cpp/unitTests.h)
+)

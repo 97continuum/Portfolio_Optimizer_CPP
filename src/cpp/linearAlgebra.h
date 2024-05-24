@@ -21,4 +21,13 @@ double vectorNorm(const std::vector<double>& vector);
 std::vector< std::vector<double> > matrixMultiplication(const std::vector< std::vector<double> >& A,
                                                       const std::vector< std::vector<double> >& B);
 
+// unit tests
+void testVectorAdd();
+void testVectorSub();
+void testDotProduct();
+void testScalarMult();
+void testMatVecMult();
+void testMatMatMult();
+void testAllFunctions();
+
 #endif //COURSEWORK_LINEARALGEBRA_H
