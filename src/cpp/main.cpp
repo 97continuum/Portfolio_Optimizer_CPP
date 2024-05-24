@@ -32,7 +32,6 @@ int  main (int  argc, char  *argv[])
     readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
     // Convert to vector of vectors
     std::vector<std::vector<double>> returns = convertToVectorMatrix(returnMatrix, numberAssets, numberReturns);
-    //testAllFunctions(); // Test Linear Algebra Functions
 
     // Instantiate Portfolio Object
     double targetReturns = 0.05;

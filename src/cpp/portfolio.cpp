@@ -3,11 +3,9 @@
 //
 
 #include "portfolio.h"
-#include <cmath>
 #include <numeric>
-#include <iostream>
 #include "linearAlgebra.h"
-#include "math.h"
+
 
 // Constructor for Portfolio Class
 Portfolio::Portfolio(const std::vector<std::vector<double>> &returns, double targetReturn, int numAssets, int numPeriods)
@@ -86,49 +84,47 @@ std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<d
                                                  const std::vector<double> &b,
                                                  const std::vector<double> &x0)
 {
-    std::vector<double>  x, s, p, Qp, alphaQp;
-    double alpha, beta, sTs, pTQp, sTsNew;
+    std::vector<double>  x_, s_pre, s_aft, p_pre, p_aft, Qp, alphaQp, weights;
+    double alpha, beta, pTQp;
     size_t n = b.size();
-    x = x0;
-    s = vectorSubtraction(b, matrixVectorMultiplication(Q, x0)); // s: b - Qx
-    p = s; // set Initial Direction
-    sTs = vectorDotProduct(s, s);
-    //printVector(x, "x");
-    //printVector(s, "s");
-    //printVector(p, "p");
-    //std::cout << "sTs : " << sTs << std::endl;
 
     for (size_t k = 0; k < n; ++k)
     {
-        Qp = matrixVectorMultiplication(Q, p);
-        //printVector(Qp, "Q*p");
-        pTQp = vectorDotProduct(p, Qp);
-        //std::cout << "Dot Product " << pTQp << std::endl;
-        if (std::abs(pTQp) < 1e-10) {
-            std::cerr << "Division by nearly zero in alpha computation, terminating algorithm." << std::endl;
-            break;
-        }
-        alpha = sTs / pTQp; // step size
-        //std::cout << "alpha " << alpha << std::endl;
-        x = vectorAddition(x, scalarMultiplication(p, alpha));
+        x_ = x0;
+        s_pre = vectorSubtraction(b, matrixVectorMultiplication(Q, x0)); // s: b - Qx
+        p_pre = s_pre; // set Initial Direction
+        //sTs = vectorDotProduct(s_pre, s_pre);
         //printVector(x, "x");
-        alphaQp = scalarMultiplication(Qp, alpha);
-        s = vectorSubtraction(s, alphaQp);
         //printVector(s, "s");
-        sTsNew = vectorDotProduct(s, s);
-        //std::cout << "sTsNew " << sTsNew << std::endl;
-
-        if (sTsNew < 1.0E-6) {
-            //std::cout << "sTsNew less than epsilon threshold - breaking from code" << std::endl;
-            break;
-        }
-        beta = sTsNew / sTs;
-        p = vectorAddition(s, scalarMultiplication(p, beta));
         //printVector(p, "p");
-        sTs = sTsNew;
         //std::cout << "sTs : " << sTs << std::endl;
-    }
 
+        while (vectorDotProduct(s_pre, s_pre) > 1.0E-6) {
+            Qp = matrixVectorMultiplication(Q, p_pre);
+            pTQp = vectorDotProduct(p_pre, Qp);
+            alpha = vectorDotProduct(s_pre, s_pre) / pTQp; // step size
+            x_ = vectorAddition(x_, scalarMultiplication(p_pre, alpha));
+            alphaQp = scalarMultiplication(Qp, alpha);
+            s_aft = vectorSubtraction(s_pre, alphaQp);
+            beta = vectorDotProduct(s_aft, s_aft) / vectorDotProduct(s_pre, s_pre);
+            p_aft = vectorAddition(s_aft, scalarMultiplication(p_pre, beta));
+            s_pre = s_aft;
+            p_pre = p_aft;
+            //printVector(Qp, "Q*p");
+            //std::cout << "Dot Product " << pTQp << std::endl;
+            //std::cout << "alpha " << alpha << std::endl;
+            //printVector(x, "x");
+            //printVector(s, "s");
+            //std::cout << "sTsNew " << sTsNew << std::endl;
+            //printVector(p, "p");
+            //std::cout << "sTs : " << sTs << std::endl;
+        }
+        //x0.push_back(x_);
+        for (int j = 0; j < x_.size()-2; j++)
+        {
+            weights.push_back(x_[j]); // Add weights except Langrange Multipliers from x
+        }
+    }
     //std::cout << "Finished Optimization" << std::endl;
-    return x;
+    return weights;
 }
