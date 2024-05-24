@@ -35,11 +35,13 @@ int  main (int  argc, char  *argv[])
     // Set list of increasing target Portfolio Returns
     const int steps = 20;
     double temp[steps];
+    double start = 0.005;
+    double end = 0.1;
+    double increment = (end - start) / (steps - 1);
     for (int i = 0; i < steps; ++i) {
-        temp[i] = 0.005 + i * 0.005;
+        temp[i] = start + i * increment;
     }
     std::vector<double> tReturns(temp, temp + steps);
-    std::cout << "List of Target Returns: " << std::endl;
     for (double value : tReturns) {
         std::cout << value << " ";
     }
@@ -49,18 +51,26 @@ int  main (int  argc, char  *argv[])
     int isWindow = 100;
     int oosWindow = 12;
     int slidingWindow = 12;
-    int numOfSlidingWindows = (numberReturns - isWindow - oosWindow) / (slidingWindow + 1);
-
+    int numOfSlidingWindows = (numberReturns - isWindow - oosWindow) / (slidingWindow);
+    //std::cout << numOfSlidingWindows << std::endl;
 
     // Run backtest and send returns to CSV file
     ofstream resultsFile;
     resultsFile.open("data/results.csv");
     resultsFile << "Target Returns,";
     for (int i = 0; i < numberAssets - 1; i++){
-        resultsFile << i+1 << ",";
+        resultsFile << "Asset " << i+1 << ",";
     }
     resultsFile << numberAssets << endl;
 
+    double epsilon = 10e-6;
+
+    // Run Portfolio Optimizer over every Return Target
+    for (int i = 0; i < 20; i++)
+    {
+        std::cout << "For Portfolio with Target Return " << tReturns[i]*100 << "%" << std::endl;
+
+    }
 
 /*
     Portfolio portfolio(returns, targetReturns, numberAssets, numberReturns);
