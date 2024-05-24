@@ -84,13 +84,6 @@ build CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/read_data.cpp.o: CXX_COMPIL
   OBJECT_DIR = CMakeFiles/Portfolio_Optimizer_CPP.dir
   OBJECT_FILE_DIR = CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp
 
-build CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/unitTests.cpp.o: CXX_COMPILER__Portfolio_Optimizer_CPP_unscanned_Debug /Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP/src/cpp/unitTests.cpp || cmake_object_order_depends_target_Portfolio_Optimizer_CPP
-  DEP_FILE = CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/unitTests.cpp.o.d
-  FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
-  INCLUDES = -I/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP/src/cpp
-  OBJECT_DIR = CMakeFiles/Portfolio_Optimizer_CPP.dir
-  OBJECT_FILE_DIR = CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Portfolio_Optimizer_CPP
@@ -99,7 +92,7 @@ build CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/unitTests.cpp.o: CXX_COMPIL
 #############################################
 # Link the executable Portfolio_Optimizer_CPP
 
-build Portfolio_Optimizer_CPP: CXX_EXECUTABLE_LINKER__Portfolio_Optimizer_CPP_Debug CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/csv.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/linearAlgebra.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/portfolio.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/read_data.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/unitTests.cpp.o
+build Portfolio_Optimizer_CPP: CXX_EXECUTABLE_LINKER__Portfolio_Optimizer_CPP_Debug CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/csv.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/linearAlgebra.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/portfolio.cpp.o CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/read_data.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
   OBJECT_DIR = CMakeFiles/Portfolio_Optimizer_CPP.dir
   POST_BUILD = :

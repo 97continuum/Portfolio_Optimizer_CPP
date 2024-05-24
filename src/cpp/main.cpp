@@ -32,31 +32,37 @@ int  main (int  argc, char  *argv[])
     // Convert to vector of vectors
     std::vector<std::vector<double>> returns = convertToVectorMatrix(returnMatrix, numberAssets, numberReturns);
 
-    // Set target Portfolio Returns
-    const int size = 20;
-    double temp[size];
-
-    for (int i = 0; i < size; ++i) {
+    // Set list of increasing target Portfolio Returns
+    const int steps = 20;
+    double temp[steps];
+    for (int i = 0; i < steps; ++i) {
         temp[i] = 0.005 + i * 0.005;
     }
-
-    std::vector<double> tReturns(temp, temp + size);
-
+    std::vector<double> tReturns(temp, temp + steps);
+    std::cout << "List of Target Returns: " << std::endl;
     for (double value : tReturns) {
         std::cout << value << " ";
     }
+    std::cout << std::endl;
 
     // Backtesting Parameters
     int isWindow = 100;
     int oosWindow = 12;
     int slidingWindow = 12;
-    int numOfSlidingWindows = int()(numberReturns - isWindow - oosWindow) / (slidingWindow + 1);
+    int numOfSlidingWindows = (numberReturns - isWindow - oosWindow) / (slidingWindow + 1);
 
 
+    // Run backtest and send returns to CSV file
+    ofstream resultsFile;
+    resultsFile.open("data/results.csv");
+    resultsFile << "Target Returns,";
+    for (int i = 0; i < numberAssets - 1; i++){
+        resultsFile << i+1 << ",";
+    }
+    resultsFile << numberAssets << endl;
 
-    std::vector<double> tReturns(temp, temp + size);
 
-
+/*
     Portfolio portfolio(returns, targetReturns, numberAssets, numberReturns);
     std::vector<double> portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns
     //printVector(portfolioMeanReturns, "Mean Returns");
@@ -65,10 +71,7 @@ int  main (int  argc, char  *argv[])
 
     std::vector<double> weights = portfolio.solveOptimization();
     printVector(weights, "of Portfolio Weights - last two entries are Langrage multiplier constants");
-
-
-
-
+*/
 
     // Delete Memory from Double Pointer
     deleteDoublePointer(returnMatrix, numberAssets);

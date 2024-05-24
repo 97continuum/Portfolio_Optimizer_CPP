@@ -27,5 +27,13 @@ private:
     std::vector< std::vector<double> > covarianceMatrix; // Variance Covariance Matrix for N Assets
 };
 
+class Backtesting_Engine {
+public:
+
+
+private:
+
+
+};
 
 #endif //COURSEWORK_PORTFOLIO_H
