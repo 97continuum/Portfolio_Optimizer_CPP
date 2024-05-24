@@ -18,7 +18,7 @@ double string_to_double(const std::string& s) {
 }
 
 void readData(double **data, const std::string& fileName) {
-    std::cout << "Attempting to open file: " << fileName << std::endl;
+    //std::cout << "Attempting to open file: " << fileName << std::endl;
 
     std::ifstream file(fileName);
     if (!file.is_open()) {
@@ -37,7 +37,7 @@ void readData(double **data, const std::string& fileName) {
         i++;
     }
     file.close();
-    std::cout << "File read successfully: " << fileName << std::endl;
+    //std::cout << "File read successfully: " << fileName << std::endl;
 }
 
 bool changeWorkingDirectory(const std::string& newDir) {
@@ -49,7 +49,7 @@ bool changeWorkingDirectory(const std::string& newDir) {
     }
     else
     {
-        std::cout << "Successfully changed working directory to: " << newDir << std::endl;
+        //std::cout << "Successfully changed working directory to: " << newDir << std::endl;
         return true;
     }
 }
@@ -69,7 +69,7 @@ bool checkFileInCurrentDirectory(const std::string& fileName) {
         std::cerr << "File " << fullPath << " does not exist." << std::endl;
         return false;
     } else {
-        std::cout << "File " << fullPath << " exists" << std::endl;
+        //std::cout << "File " << fullPath << " exists" << std::endl;
     }
     file.close();
     return true;

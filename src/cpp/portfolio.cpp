@@ -9,8 +9,6 @@
 #include "linearAlgebra.h"
 #include "math.h"
 
-const double NEARZERO = 1.0e-10;
-
 // Constructor for Portfolio Class
 Portfolio::Portfolio(const std::vector<std::vector<double>> &returns, double targetReturn, int numAssets, int numPeriods)
     : returns(returns), targetReturn(targetReturn), numAssets(numAssets), numPeriods(numPeriods){}
@@ -59,8 +57,8 @@ std::vector<double> Portfolio::solveOptimization()
     std::vector< std::vector<double> > Q(numAssets + 2, std::vector<double>(numAssets + 2, 0.0)); // Dimensions of Matrix Q
     std::vector<double> b(numAssets + 2, 0.0); // Dimensions of Vector b
     std::vector<double> x0(numAssets, 1/numAssets); // Dimensions of Vector X
-    x0.push_back(0.1);
-    x0.push_back(0.1);
+    x0.push_back(0.005);
+    x0.push_back(0.005);
 
     // Fill Q Matrix
     for (size_t i=0; i < numAssets; ++i)
@@ -74,11 +72,11 @@ std::vector<double> Portfolio::solveOptimization()
         Q[numAssets][i] = -meanReturns[i];
         Q[numAssets+1][i] = -1.0;
     }
-    printMatrix(Q, "Q");
+    //printMatrix(Q, "Q");
     // Fill b vector
     b[numAssets] = -targetReturn;
     b[numAssets+1] = -1.0;
-    printVector(b, "b");
+    //printVector(b, "b");
 
     // Solve for Qx = b by Conjugate Method
     return conjugateGradient(Q, b, x0);
@@ -88,50 +86,49 @@ std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<d
                                                  const std::vector<double> &b,
                                                  const std::vector<double> &x0)
 {
+    std::vector<double>  x, s, p, Qp, alphaQp;
+    double alpha, beta, sTs, pTQp, sTsNew;
     size_t n = b.size();
-    std::vector<double> x = x0;
-    printVector(x, "x");
-    std::vector<double> s = vectorSubtraction(b, matrixVectorMultiplication(Q, x0)); // s: b - Qx
-    printVector(s, "s");
-    std::vector<double> p = s; // set Initial Direction
-    printVector(p, "p");
-    double sTs = vectorDotProduct(s, s);
-    std::cout << "sTs : " << sTs << std::endl;
+    x = x0;
+    s = vectorSubtraction(b, matrixVectorMultiplication(Q, x0)); // s: b - Qx
+    p = s; // set Initial Direction
+    sTs = vectorDotProduct(s, s);
+    //printVector(x, "x");
+    //printVector(s, "s");
+    //printVector(p, "p");
+    //std::cout << "sTs : " << sTs << std::endl;
 
     for (size_t k = 0; k < n; ++k)
     {
-        std::vector<double> Qp = matrixVectorMultiplication(Q, p);
-        printVector(Qp, "Q*p");
-        double pTQp = vectorDotProduct(p, Qp);
-        std::cout << "Dot Product " << pTQp << std::endl;
-
+        Qp = matrixVectorMultiplication(Q, p);
+        //printVector(Qp, "Q*p");
+        pTQp = vectorDotProduct(p, Qp);
+        //std::cout << "Dot Product " << pTQp << std::endl;
         if (std::abs(pTQp) < 1e-10) {
             std::cerr << "Division by nearly zero in alpha computation, terminating algorithm." << std::endl;
             break;
         }
-
-        double alpha = sTs / pTQp; // step size
-        std::cout << "alpha " << alpha << std::endl;
+        alpha = sTs / pTQp; // step size
+        //std::cout << "alpha " << alpha << std::endl;
         x = vectorAddition(x, scalarMultiplication(p, alpha));
-        printVector(x, "x");
-        std::vector<double> alphaQp = scalarMultiplication(Qp, alpha);
+        //printVector(x, "x");
+        alphaQp = scalarMultiplication(Qp, alpha);
         s = vectorSubtraction(s, alphaQp);
-        printVector(s, "s");
-        double sTsNew = vectorDotProduct(s, s);
-        std::cout << "sTsNew " << sTsNew << std::endl;
+        //printVector(s, "s");
+        sTsNew = vectorDotProduct(s, s);
+        //std::cout << "sTsNew " << sTsNew << std::endl;
 
         if (sTsNew < 1.0E-6) {
-            std::cout << "sTsNew less than epsilon threshold - breaking out from code" << std::endl;
+            //std::cout << "sTsNew less than epsilon threshold - breaking from code" << std::endl;
             break;
         }
-
-        double beta = sTsNew / sTs;
+        beta = sTsNew / sTs;
         p = vectorAddition(s, scalarMultiplication(p, beta));
-        printVector(p, "p");
+        //printVector(p, "p");
         sTs = sTsNew;
-        std::cout << "sTs : " << sTs << std::endl;
+        //std::cout << "sTs : " << sTs << std::endl;
     }
 
-    std::cout << "Finished Optimization" << std::endl;
+    //std::cout << "Finished Optimization" << std::endl;
     return x;
 }
