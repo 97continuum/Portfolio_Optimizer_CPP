@@ -6,7 +6,7 @@
 
 // Print Matrix
 // Print Covariance Matrix
-void printMatrix(const std::vector< std::vector<double> >& matrix, std::string matrixName)
+void printMatrix(const std::vector< std::vector<double> >& matrix, const std::string& matrixName)
 {
     try
     {
@@ -37,7 +37,7 @@ void printMatrix(const std::vector< std::vector<double> >& matrix, std::string m
 }
 
 // Print Vector
-void printVector(const std::vector< double >& vector, std::string vectorName)
+void printVector(const std::vector< double >& vector, const std::string& vectorName)
 {
     try
     {
@@ -103,6 +103,18 @@ std::vector<double> scalarMultiplication(const std::vector<double>& vector, doub
     return result;
 }
 
+// Scalar Division
+std::vector<double> scalarDivision(const std::vector<double>& vector, double scalar)
+{
+    std::vector<double> result(vector.size());
+    for (size_t i = 0; i < vector.size(); ++i)
+    {
+        result[i] = vector[i] / scalar;
+    }
+    return result;
+}
+
+
 // Matrix Vector Multiplication
 std::vector<double> matrixVectorMultiplication(const std::vector< std::vector<double> >& matrix,
                                                const std::vector<double>& vector)
@@ -158,3 +170,5 @@ std::vector< std::vector<double> > matrixMultiplication(const std::vector< std::
 
     return result;
 }
+
+// Later on if Matrix Matrix addition/subtraction/division is needed, add that

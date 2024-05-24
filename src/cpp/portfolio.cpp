@@ -58,7 +58,9 @@ std::vector<double> Portfolio::solveOptimization()
     //size_t n = meanReturns.size(); // number of Assets
     std::vector< std::vector<double> > Q(numAssets + 2, std::vector<double>(numAssets + 2, 0.0)); // Dimensions of Matrix Q
     std::vector<double> b(numAssets + 2, 0.0); // Dimensions of Vector b
-    std::vector<double> x0(numAssets + 2, 0.0); // Dimensions of Vector X
+    std::vector<double> x0(numAssets, 1/numAssets); // Dimensions of Vector X
+    x0.push_back(0.1);
+    x0.push_back(0.1);
 
     // Fill Q Matrix
     for (size_t i=0; i < numAssets; ++i)
@@ -84,7 +86,7 @@ std::vector<double> Portfolio::solveOptimization()
 
 std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<double>> &Q,
                                                  const std::vector<double> &b,
-                                                 const std::vector<double> &x0) const
+                                                 const std::vector<double> &x0)
 {
     size_t n = b.size();
     std::vector<double> x = x0;

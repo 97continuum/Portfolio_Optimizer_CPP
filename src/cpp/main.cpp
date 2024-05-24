@@ -35,7 +35,7 @@ int  main (int  argc, char  *argv[])
     //testAllFunctions(); // Test Linear Algebra Functions
 
     // Instantiate Portfolio Object
-    double targetReturns = 0.5;
+    double targetReturns = 0.001;
     Portfolio portfolio(returns, targetReturns, numberAssets, numberReturns);
 
     std::vector<double> portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns

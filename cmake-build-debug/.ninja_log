@@ -72,3 +72,10 @@
 510	562	1716541084258056241	Portfolio_Optimizer_CPP	30b3ff081ed1b103
 5	289	1716541168917372886	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
 289	325	1716541168955074481	Portfolio_Optimizer_CPP	30b3ff081ed1b103
+6	524	1716543264503817992	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
+524	575	1716543264557691269	Portfolio_Optimizer_CPP	30b3ff081ed1b103
+7	470	1716544228261476149	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/linearAlgebra.cpp.o	7081a860367da2f3
+8	471	1716544228263182169	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/unitTests.cpp.o	22fc411436c396ee
+8	480	1716544228272863861	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/main.cpp.o	f2ca141cb32b6bfd
+8	491	1716544228282690431	CMakeFiles/Portfolio_Optimizer_CPP.dir/src/cpp/portfolio.cpp.o	5e697c4774e4e74c
+491	542	1716544228336790627	Portfolio_Optimizer_CPP	30b3ff081ed1b103

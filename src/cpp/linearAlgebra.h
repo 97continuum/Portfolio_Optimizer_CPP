@@ -8,12 +8,13 @@
 #include <iostream>
 #include "vector"
 
-void printMatrix(const std::vector< std::vector<double> >& matrix, std::string matrixName);
-void printVector(const std::vector< double >& vector, std::string vectorName);
+void printMatrix(const std::vector< std::vector<double> >& matrix, const std::string& matrixName);
+void printVector(const std::vector< double >& vector, const std::string& vectorName);
 std::vector<double> vectorAddition(const std::vector<double>& a, const std::vector<double>& b);
 std::vector<double> vectorSubtraction(const std::vector<double>& a, const std::vector<double>& b);
 double vectorDotProduct(const std::vector<double>& a, const std::vector<double>& b);
 std::vector<double> scalarMultiplication(const std::vector<double>& vector, double scalar);
+std::vector<double> scalarDivision(const std::vector<double>& vector, double scalar);
 std::vector<double> matrixVectorMultiplication(const std::vector< std::vector<double> >& matrix,
                                                const std::vector<double>& vector);
 double vectorNorm(const std::vector<double>& vector);
