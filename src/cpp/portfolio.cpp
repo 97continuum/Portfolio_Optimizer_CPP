@@ -5,14 +5,16 @@
 #include "portfolio.h"
 #include <numeric>
 #include "linearAlgebra.h"
+#include <stdexcept>
 
+using namespace std;
 
 // Constructor for Portfolio Class
-Portfolio::Portfolio(const std::vector<std::vector<double>> &returns, double targetReturn, int numAssets, int numPeriods)
+Portfolio::Portfolio(const Matrix &returns, double targetReturn, int numAssets, int numPeriods)
     : returns(returns), targetReturn(targetReturn), numAssets(numAssets), numPeriods(numPeriods){}
 
 // Calculate Mean Returns
-std::vector<double> Portfolio::calculateMeanReturn()
+Vector Portfolio::calculateMeanReturn()
 {
     //size_t numAssets = returns.size();
     //size_t numPeriods = returns[0].size();
@@ -20,16 +22,16 @@ std::vector<double> Portfolio::calculateMeanReturn()
 
     for (int i = 0; i < numAssets; ++i)
     {
-        meanReturns[i] = std::accumulate(returns[i].begin(), returns[i].end(), 0.0) / numPeriods;
+        meanReturns[i] = accumulate(returns[i].begin(), returns[i].end(), 0.0) / numPeriods;
     }
     return meanReturns;
 }
 
 // Calculate Covariance Matrix
-std::vector< std::vector<double> > Portfolio::calculateCovarianceMatrix() {
+MatrixPortfolio::calculateCovarianceMatrix() {
     //size_t numAssets = returns.size();
     //size_t numPeriods = returns[0].size();
-    covarianceMatrix.resize(numAssets, std::vector<double>(numAssets, 0.0));
+    covarianceMatrix.resize(numAssets, Vector(numAssets, 0.0));
 
     // Calculate Mean Returns if they have not been calculated
     if (meanReturns.empty()) {
@@ -49,12 +51,12 @@ std::vector< std::vector<double> > Portfolio::calculateCovarianceMatrix() {
 }
 
 // solve Optimization Problem by creating the System of Linear Equations needed for Conjugate Gradient Method
-std::vector<double> Portfolio::solveOptimization()
+Vector Portfolio::solveOptimization()
 {
     //size_t n = meanReturns.size(); // number of Assets
-    std::vector< std::vector<double> > Q(numAssets + 2, std::vector<double>(numAssets + 2, 0.0)); // Dimensions of Matrix Q
-    std::vector<double> b(numAssets + 2, 0.0); // Dimensions of Vector b
-    std::vector<double> x0(numAssets, 1/numAssets); // Dimensions of Vector X
+    MatrixQ(numAssets + 2, Vector(numAssets + 2, 0.0)); // Dimensions of Matrix Q
+    Vector b(numAssets + 2, 0.0); // Dimensions of Vector b
+    Vector x0(numAssets, 1.0/numAssets); // Dimensions of Vector X
     x0.push_back(0.005);
     x0.push_back(0.005);
 
@@ -70,21 +72,21 @@ std::vector<double> Portfolio::solveOptimization()
         Q[numAssets][i] = -meanReturns[i];
         Q[numAssets+1][i] = -1.0;
     }
-    //printMatrix(Q, "Q");
     // Fill b vector
     b[numAssets] = -targetReturn;
     b[numAssets+1] = -1.0;
+    //printMatrix(Q, "Q");
     //printVector(b, "b");
 
     // Solve for Qx = b by Conjugate Method
     return conjugateGradient(Q, b, x0);
 }
 
-std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<double>> &Q,
-                                                 const std::vector<double> &b,
-                                                 const std::vector<double> &x0)
+Vector Portfolio::conjugateGradient(const Matrix &Q,
+                                                 const Vector &b,
+                                                 const Vector &x0)
 {
-    std::vector<double>  x_, s_pre, s_aft, p_pre, p_aft, Qp, alphaQp, weights;
+    Vector  x_, s_pre, s_aft, p_pre, p_aft, Qp, alphaQp, weights;
     double alpha, beta, pTQp;
     size_t n = b.size();
 
@@ -97,34 +99,42 @@ std::vector<double> Portfolio::conjugateGradient(const std::vector<std::vector<d
         //printVector(x, "x");
         //printVector(s, "s");
         //printVector(p, "p");
-        //std::cout << "sTs : " << sTs << std::endl;
+        //cout << "sTs : " << sTs << endl;
 
         while (vectorDotProduct(s_pre, s_pre) > 1.0E-6) {
-            Qp = matrixVectorMultiplication(Q, p_pre);
-            pTQp = vectorDotProduct(p_pre, Qp);
-            alpha = vectorDotProduct(s_pre, s_pre) / pTQp; // step size
-            x_ = vectorAddition(x_, scalarMultiplication(p_pre, alpha));
+            Qp = matrixVectorMultiplication(Q, p_pre); //printVector(Qp, "Q*p");
+            pTQp = vectorDotProduct(p_pre, Qp); //cout << "Dot Product " << pTQp << endl;
+            alpha = vectorDotProduct(s_pre, s_pre) / pTQp; // step size //cout << "alpha " << alpha << endl;
+            x_ = vectorAddition(x_, scalarMultiplication(p_pre, alpha)); //printVector(x, "x");
             alphaQp = scalarMultiplication(Qp, alpha);
-            s_aft = vectorSubtraction(s_pre, alphaQp);
+            s_aft = vectorSubtraction(s_pre, alphaQp); //cout << "s_aft " << s_aft << endl;
             beta = vectorDotProduct(s_aft, s_aft) / vectorDotProduct(s_pre, s_pre);
             p_aft = vectorAddition(s_aft, scalarMultiplication(p_pre, beta));
             s_pre = s_aft;
             p_pre = p_aft;
-            //printVector(Qp, "Q*p");
-            //std::cout << "Dot Product " << pTQp << std::endl;
-            //std::cout << "alpha " << alpha << std::endl;
-            //printVector(x, "x");
-            //printVector(s, "s");
-            //std::cout << "sTsNew " << sTsNew << std::endl;
-            //printVector(p, "p");
-            //std::cout << "sTs : " << sTs << std::endl;
         }
-        //x0.push_back(x_);
         for (int j = 0; j < x_.size()-2; j++)
         {
             weights.push_back(x_[j]); // Add weights except Langrange Multipliers from x
         }
     }
-    //std::cout << "Finished Optimization" << std::endl;
+    //cout << "Finished Optimization" << endl;
     return weights;
 }
+// Helper Functions
+
+// Slice Matrix
+template <typename T>
+vector< vector<T> > sliceMatrixByRows(const vector<vector<int>>& matrix,
+                                                int row_start, int row_end) {
+    // Check for valid range
+    if (row_start > row_end || row_end > matrix.size())
+    {
+        throw out_of_range("Invalid slice range");
+    }
+    vector<vector<int>> submatrix(matrix.begin() + row_start, matrix.begin() + row_end);
+    return submatrix;
+}
+
+
+// Backtesting Class

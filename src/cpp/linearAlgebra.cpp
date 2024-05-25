@@ -4,65 +4,67 @@
 #include "linearAlgebra.h"
 #include <vector>
 
+using namespace std;
+
 // Print Matrix
 // Print Covariance Matrix
-void printMatrix(const std::vector< std::vector<double> >& matrix, const std::string& matrixName)
+void printMatrix(const Matrix & matrix, const string& matrixName)
 {
     try
     {
         if (matrix.empty())
         {
-            std::cerr << "Matrix is empty." << std::endl;
+            cerr << "Matrix is empty." << endl;
             return;
         }
-        std::cout << "Matrix: " << matrixName << std::endl;
+        cout << "Matrix: " << matrixName << endl;
         for (const auto& row : matrix)
         {
             if (row.empty())
             {
-                std::cerr << "Matrix " << matrixName << "contains an empty row." << std::endl;
+                cerr << "Matrix " << matrixName << "contains an empty row." << endl;
                 return;
             }
             for (const auto& value : row)
             {
-                std::cout << value << " ";
+                cout << value << " ";
             }
-            std::cout << std::endl;
+            cout << endl;
         }
     }
-    catch (const std::exception& e)
+    catch (const exception& e)
     {
-        std::cerr << "Exception caught: " << e.what() << std::endl;
+        cerr << "Exception caught: " << e.what() << endl;
     }
 }
 
 // Print Vector
-void printVector(const std::vector< double >& vector, const std::string& vectorName)
+void printVector(const Vector& vector, const string& vectorName)
 {
     try
     {
         if (vector.empty())
         {
-            std::cerr << "Vector" << vectorName << "is empty" << std::endl;
+            cerr << "Vector" << vectorName << "is empty" << endl;
             return;
         }
-        std::cout << "Vector " << vectorName << std::endl;
+        cout << "Vector " << vectorName << endl;
         for (const auto& value : vector)
         {
-            std::cout << value << " ";
+            cout << value << " ";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
-    catch (const std::exception& e)
+    catch (const exception& e)
     {
-        std::cerr << "Except caught: " << e.what() << std::endl;
+        cerr << "Except caught: " << e.what() << endl;
     }
 }
 
 // Vector Addition
-std::vector<double> vectorAddition(const std::vector<double>& a, const std::vector<double>& b)
+Vector vectorAddition(const Vector& a, const Vector& b)
 {
-    std::vector<double> result(a.size());
+    Vector result(a.size());
     for (size_t i = 0; i < a.size(); ++i)
     {
         result[i] = a[i] + b[i];
@@ -71,9 +73,9 @@ std::vector<double> vectorAddition(const std::vector<double>& a, const std::vect
 }
 
 // Vector Subtraction
-std::vector<double> vectorSubtraction(const std::vector<double>& a, const std::vector<double>& b)
+Vector vectorSubtraction(const Vector& a, const Vector& b)
 {
-    std::vector<double> result(a.size());
+    Vector result(a.size());
     for (size_t i = 0; i < a.size(); ++i)
     {
         result[i] = a[i] - b[i];
@@ -81,8 +83,8 @@ std::vector<double> vectorSubtraction(const std::vector<double>& a, const std::v
     return result;
 }
 
-// Dot Product
-double vectorDotProduct(const std::vector<double>& a, const std::vector<double>& b)
+// Vector Dot Product
+double vectorDotProduct(const Vector& a, const Vector& b)
 {
     double result = 0.0;
     for (size_t i = 0; i < a.size(); ++i)
@@ -92,10 +94,10 @@ double vectorDotProduct(const std::vector<double>& a, const std::vector<double>&
     return result;
 }
 
-// Scalar Multiplication
-std::vector<double> scalarMultiplication(const std::vector<double>& vector, double scalar)
+// Vector Scalar Multiplication
+Vector scalarMultiplication(const Vector& vector, double scalar)
 {
-    std::vector<double> result(vector.size());
+    Vector result(vector.size());
     for (size_t i = 0; i < vector.size(); ++i)
     {
         result[i] = scalar * vector[i];
@@ -103,10 +105,10 @@ std::vector<double> scalarMultiplication(const std::vector<double>& vector, doub
     return result;
 }
 
-// Scalar Division
-std::vector<double> scalarDivision(const std::vector<double>& vector, double scalar)
+// Vector Scalar Division
+Vector scalarDivision(const Vector& vector, double scalar)
 {
-    std::vector<double> result(vector.size());
+    Vector result(vector.size());
     for (size_t i = 0; i < vector.size(); ++i)
     {
         result[i] = vector[i] / scalar;
@@ -114,20 +116,24 @@ std::vector<double> scalarDivision(const std::vector<double>& vector, double sca
     return result;
 }
 
+// Vector Norm
+double vectorNorm(const Vector& vector)
+{
+    return sqrt(vectorDotProduct(vector, vector));
+}
 
 // Matrix Vector Multiplication
-std::vector<double> matrixVectorMultiplication(const std::vector< std::vector<double> >& matrix,
-                                               const std::vector<double>& vector)
+Vector matrixVectorMultiplication(const Matrix& matrix, const Vector& vector)
 {
     // Check if the matrix is empty
     if (matrix.empty() || vector.empty()) {
-        throw std::invalid_argument("Matrix or vector is empty.");
+        throw invalid_argument("Matrix or vector is empty.");
     }
     // Check if the number of columns in the matrix matches the size of the vector
     if (matrix[0].size() != vector.size()) {
-        throw std::invalid_argument("Matrix columns do not match vector size.");
+        throw invalid_argument("Matrix columns do not match vector size.");
     }
-    std::vector<double> result(matrix.size(), 0.0);  // Initialize the result vector with zeros
+    Vector result(matrix.size(), 0.0);  // Initialize the result vector with zeros
 
     for (size_t i = 0; i < matrix.size(); ++i) {
         for (size_t j = 0; j < vector.size(); ++j) {
@@ -138,13 +144,8 @@ std::vector<double> matrixVectorMultiplication(const std::vector< std::vector<do
     return result;
 }
 
-double vectorNorm(const std::vector<double>& vector)
-{
-    return std::sqrt(vectorDotProduct(vector, vector));
-}
 
-std::vector< std::vector<double> > matrixMultiplication(const std::vector< std::vector<double> >& A,
-                                                      const std::vector< std::vector<double> >& B)
+Matrix matrixMultiplication(const Matrix& A, const Matrix& B)
 {
     size_t n = A.size(); // Number of rows in A
     size_t m = A[0].size(); // Number of Columns in A
@@ -153,12 +154,10 @@ std::vector< std::vector<double> > matrixMultiplication(const std::vector< std::
     // Check if the Number of columns of A match the number of Rows in B
     if (m != B.size())
     {
-        throw std::invalid_argument("Dimensions of Matrix A Columns do not match Dimensions of Matrix B Rows");
+        throw invalid_argument("Dimensions of Matrix A Columns do not match Dimensions of Matrix B Rows");
     }
 
-    // Initialize result matrix with zeros
-    std::vector< std::vector<double> > result(n, std::vector<double>(p, 0.0));
-
+    Matrix result(n, Vector(p, 0.0)); // Initialize result matrix with zeros
     // Perform matrix multiplication
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = 0; j < p; ++j) {
@@ -167,7 +166,6 @@ std::vector< std::vector<double> > matrixMultiplication(const std::vector< std::
             }
         }
     }
-
     return result;
 }
 
@@ -177,108 +175,108 @@ std::vector< std::vector<double> > matrixMultiplication(const std::vector< std::
 // Unit Tests for each function
 
 void testVectorAdd() {
-    std::vector<double> a = {1.0, 2.0, 3.0};
-    std::vector<double> b = {4.0, 5.0, 6.0};
-    std::vector<double> result = vectorAddition(a, b);
+    Vector a = {1.0, 2.0, 3.0};
+    Vector b = {4.0, 5.0, 6.0};
+    Vector result = vectorAddition(a, b);
 
-    std::cout << "Vector Addition Result: ";
+    cout << "Vector Addition Result: ";
     for (double val : result) {
-        std::cout << val << " ";
+        cout << val << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 void testVectorSub() {
-    std::vector<double> a = {4.0, 5.0, 6.0};
-    std::vector<double> b = {1.0, 2.0, 3.0};
-    std::vector<double> result = vectorSubtraction(a, b);
+    Vector a = {4.0, 5.0, 6.0};
+    Vector b = {1.0, 2.0, 3.0};
+    Vector result = vectorSubtraction(a, b);
 
-    std::cout << "Vector Subtraction Result: ";
+    cout << "Vector Subtraction Result: ";
     for (double val : result) {
-        std::cout << val << " ";
+        cout << val << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 void testDotProduct() {
-    std::vector<double> a = {1.0, 2.0, 3.0};
-    std::vector<double> b = {4.0, 5.0, 6.0};
+    Vector a = {1.0, 2.0, 3.0};
+    Vector b = {4.0, 5.0, 6.0};
     double result = vectorDotProduct(a, b);
 
-    std::cout << "Dot Product Result: " << result << std::endl;
+    cout << "Dot Product Result: " << result << endl;
 }
 
 void testScalarMult() {
-    std::vector<double> a = {1.0, 2.0, 3.0};
+    Vector a = {1.0, 2.0, 3.0};
     double scalar = 2.0;
-    std::vector<double> result = scalarMultiplication(a, scalar);
+    Vector result = scalarMultiplication(a, scalar);
 
-    std::cout << "Scalar Multiplication Result: ";
+    cout << "Scalar Multiplication Result: ";
     for (double val : result) {
-        std::cout << val << " ";
+        cout << val << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 void testMatVecMult() {
-    std::vector<std::vector<double>> mat = {
+    Matrix mat = {
             {1.0, 2.0, 3.0},
             {4.0, 5.0, 6.0},
             {7.0, 8.0, 9.0}
     };
-    std::vector<double> vec = {1.0, 2.0, 3.0};
-    std::vector<double> result = matrixVectorMultiplication(mat, vec);
+    Vector vec = {1.0, 2.0, 3.0};
+    Vector result = matrixVectorMultiplication(mat, vec);
 
-    std::cout << "Matrix-Vector Multiplication Result: ";
+    cout << "Matrix-Vector Multiplication Result: ";
     for (double val : result) {
-        std::cout << val << " ";
+        cout << val << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 void testMatMatMult() {
-    std::vector<std::vector<double>> A = {
+    Matrix A = {
             {1.0, 2.0},
             {3.0, 4.0},
             {5.0, 6.0}
     };
-    std::vector<std::vector<double>> B = {
+    Matrix B = {
             {7.0, 8.0, 9.0},
             {10.0, 11.0, 12.0}
     };
-    std::vector<std::vector<double>> result = matrixMultiplication(A, B);
+    Matrix result = matrixMultiplication(A, B);
 
-    std::cout << "Matrix-Matrix Multiplication Result: " << std::endl;
+    cout << "Matrix-Matrix Multiplication Result: " << endl;
     for (const auto& row : result) {
         for (double val : row) {
-            std::cout << val << " ";
+            cout << val << " ";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
 }
 
 void testAllFunctions(){
-    std::cout << "Testing Vector Addition..." << std::endl;
+    cout << "Testing Vector Addition..." << endl;
     testVectorAdd();
-    std::cout << std::endl;
+    cout << endl;
 
-    std::cout << "Testing Vector Subtraction..." << std::endl;
+    cout << "Testing Vector Subtraction..." << endl;
     testVectorSub();
-    std::cout << std::endl;
+    cout << endl;
 
-    std::cout << "Testing Dot Product..." << std::endl;
+    cout << "Testing Dot Product..." << endl;
     testDotProduct();
-    std::cout << std::endl;
+    cout << endl;
 
-    std::cout << "Testing Scalar Multiplication..." << std::endl;
+    cout << "Testing Scalar Multiplication..." << endl;
     testScalarMult();
-    std::cout << std::endl;
+    cout << endl;
 
-    std::cout << "Testing Matrix-Vector Multiplication..." << std::endl;
+    cout << "Testing Matrix-Vector Multiplication..." << endl;
     testMatVecMult();
-    std::cout << std::endl;
+    cout << endl;
 
-    std::cout << "Testing Matrix-Matrix Multiplication..." << std::endl;
+    cout << "Testing Matrix-Matrix Multiplication..." << endl;
     testMatMatMult();
-    std::cout << std::endl;
+    cout << endl;
 }

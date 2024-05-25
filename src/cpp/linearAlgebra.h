@@ -8,18 +8,21 @@
 #include <iostream>
 #include "vector"
 
-void printMatrix(const std::vector< std::vector<double> >& matrix, const std::string& matrixName);
-void printVector(const std::vector< double >& vector, const std::string& vectorName);
-std::vector<double> vectorAddition(const std::vector<double>& a, const std::vector<double>& b);
-std::vector<double> vectorSubtraction(const std::vector<double>& a, const std::vector<double>& b);
-double vectorDotProduct(const std::vector<double>& a, const std::vector<double>& b);
-std::vector<double> scalarMultiplication(const std::vector<double>& vector, double scalar);
-std::vector<double> scalarDivision(const std::vector<double>& vector, double scalar);
-std::vector<double> matrixVectorMultiplication(const std::vector< std::vector<double> >& matrix,
-                                               const std::vector<double>& vector);
-double vectorNorm(const std::vector<double>& vector);
-std::vector< std::vector<double> > matrixMultiplication(const std::vector< std::vector<double> >& A,
-                                                      const std::vector< std::vector<double> >& B);
+using namespace std;
+
+typedef vector<double> Vector;
+typedef vector<Vector> Matrix;
+
+void printMatrix(const Matrix& matrix, const string& matrixName);
+void printVector(const Vector& vector, const string& vectorName);
+Vector vectorAddition(const Vector& a, const Vector& b);
+Vector vectorSubtraction(const Vector& a, const Vector& b);
+double vectorDotProduct(const Vector& a, const Vector& b);
+Vector scalarMultiplication(const Vector& vector, double scalar);
+Vector scalarDivision(const Vector& vector, double scalar);
+Vector matrixVectorMultiplication(const Matrix& matrix, const Vector& vector);
+double vectorNorm(const Vector& vector);
+Matrix matrixMultiplication(const Matrix& A, const Matrix& B);
 
 // unit tests
 void testVectorAdd();
