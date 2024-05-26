@@ -18,7 +18,20 @@ int  main (int  argc, char  *argv[])
 {
     int numberAssets = 83; // Initialize Number of Assets
     int numberReturns = 700; // Max Length of Returns Data
+    // Set list of increasing target Portfolio Returns
+    const int steps = 20;
+    double temp[steps];
+    double start = 0.005;
+    double end = 0.1;
+    double increment = (end - start) / (steps - 1);
+    // Backtesting Parameters
+    double epsilon = 1e-7;
+    int isWindow = 100;
+    int oosWindow = 12;
+    int slidingWindow = 12;
+    int numOfSlidingWindows = (numberReturns - isWindow - oosWindow) / (slidingWindow);
 
+    vector<Portfolios> TargetReturnsPortfolios;
     string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
     changeWorkingDirectory(desiredDirectory); // Change to Correct Working Directory
     string fileName = "data/asset_returns.csv"; // Return Data FileName
@@ -30,27 +43,8 @@ int  main (int  argc, char  *argv[])
         returnMatrix[i].resize(numberAssets);
     readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
 
-    // Vector average = calculateAverage(returnMatrix);
-    // printVector(average, "average");
-    // Matrix covMatrix = calculateCovMatrix(returnMatrix, average);
-    // printMatrix(covMatrix, "Cov Matrix");
-
-    // Set list of increasing target Portfolio Returns
-    const int steps = 20;
-    double temp[steps];
-    double start = 0.005;
-    double end = 0.1;
-    double increment = (end - start) / (steps - 1);
-
     for (int i = 0; i < steps; ++i) {temp[i] = start + i * increment;}
     Vector tReturns(temp, temp + steps);
-
-    // Backtesting Parameters
-    double epsilon = 1e-7;
-    int isWindow = 100;
-    int oosWindow = 12;
-    int slidingWindow = 12;
-    int numOfSlidingWindows = (numberReturns - isWindow - oosWindow) / (slidingWindow);
 
     ofstream resultsFile; // Create CSV File to send results to
     resultsFile.open("data/results.csv");
@@ -61,11 +55,10 @@ int  main (int  argc, char  *argv[])
     }
     resultsFile << "Backtest Period: " << numOfSlidingWindows << endl;
 
-    vector<Portfolios> TargetReturnsPortfolios;
-
     for (int i = 0; i < 20; i++)
     {
-        cout << "Running a Backtest for Portfolio with Target Returns of : " << tReturns[i]*100 << endl;
+        cout << "=================================================================" << endl;
+        cout << "Running a Backtest for Portfolio with Target Returns of : " << tReturns[i] << endl;
         Portfolios portfolio(isWindow, oosWindow, slidingWindow, numOfSlidingWindows, returnMatrix, tReturns[i]);
         portfolio.calculateIsMean();
         //printMatrix(portfolio.getISMean(), "Mean Return in all different periods: ");
@@ -84,11 +77,11 @@ int  main (int  argc, char  *argv[])
         portfolio.runBacktest();
         TargetReturnsPortfolios.push_back(portfolio);
 
-        cout << "With a Target Return of " << tReturns[i]*100 << " the actual return of the Portfolio is: " << endl;
+        //cout << "With a Target Return of " << tReturns[i]*100 << " the actual return of the Portfolio is: " << endl;
         Vector actualAvgReturn = portfolio.getActualAverageReturn();
-        printVector(actualAvgReturn, "Actual Average Returns");
-        cout << "Portfolio's Sharpe Ratio is: " << portfolio.getPortfolioSharpeRatio() << endl;
+        //printVector(actualAvgReturn, "Actual Average Returns");
         cout << "Portfolio's Actual Average Abnormal Return is: " << portfolio.getAvgAbnormalReturn() << endl;
+        cout << "Portfolio's Sharpe Ratio is: " << portfolio.getPortfolioSharpeRatio() << endl;
         cout << "Portfolio's Cumulate Average Return is: " << portfolio.getCumulativeAvgAbnormalReturn() << endl;
 
         resultsFile << tReturns[i]*100 << ",";
