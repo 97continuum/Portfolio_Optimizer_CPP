@@ -152,121 +152,81 @@ void BacktestingEngine::calculateOOSCovMatrix()
     }
 }
 
-
-/*
-// Constructor for Portfolio Class
-Portfolio::Portfolio(const Matrix &returns, double targetReturn, int numAssets, int numPeriods)
-    : returns(returns), targetReturn(targetReturn), numAssets(numAssets), numPeriods(numPeriods){}
-
-// Calculate Mean Returns
-Vector Portfolio::calculateMeanReturn()
-{
-    //size_t numAssets = returns.size();
-    //size_t numPeriods = returns[0].size();
-    meanReturns.resize(numAssets);
-
-    for (int i = 0; i < numAssets; ++i)
-    {
-        meanReturns[i] = accumulate(returns[i].begin(), returns[i].end(), 0.0) / numPeriods;
-    }
-    return meanReturns;
-}
-
-// Calculate Covariance Matrix
-Matrix Portfolio::calculateCovarianceMatrix() {
-    //size_t numAssets = returns.size();
-    //size_t numPeriods = returns[0].size();
-    covarianceMatrix.resize(numAssets, Vector(numAssets, 0.0));
-
-    // Calculate Mean Returns if they have not been calculated
-    if (meanReturns.empty()) {
-        calculateMeanReturn();
-    }
-
-    for (size_t i = 0; i < numAssets; ++i) {
-        for (size_t j = 0; j < numAssets; ++j) {
-            double cov = 0.0;
-            for (size_t k = 0; k < numPeriods; ++k) {
-                cov += (returns[i][k] - meanReturns[i]) * (returns[j][k] - meanReturns[j]);
-            }
-            covarianceMatrix[i][j] = cov / (numPeriods - 1);
-        }
-    }
-    return covarianceMatrix;
-}
- */
-
-/*
 // solve Optimization Problem by creating the System of Linear Equations needed for Conjugate Gradient Method
-Vector Portfolio::solveOptimization()
-{
-    //size_t n = meanReturns.size(); // number of Assets
-    Matrix Q(numAssets + 2, Vector(numAssets + 2, 0.0)); // Dimensions of Matrix Q
-    Vector b(numAssets + 2, 0.0); // Dimensions of Vector b
-    Vector x0(numAssets, 1.0/numAssets); // Dimensions of Vector X
-    x0.push_back(0.005);
-    x0.push_back(0.005);
+void BacktestingEngine::calculateIsQ() {
+    Matrix tempQ;
+    Matrix tempCov;
+    Vector tempMean;
+    Vector tempOnes(isCovMatrix[0].size(), -1.0);
 
-    // Fill Q Matrix
-    for (size_t i=0; i < numAssets; ++i)
-    {
-        for (size_t j = 0; j < numAssets; ++j)
-        {
-            Q[i][j] = covarianceMatrix[i][j];
+    tempOnes.push_back(0);
+    tempOnes.push_back(0);
+
+    for (int i = 0; i < numOfSlidingWindows; i++) {
+        tempCov = isCovMatrix[i];
+        tempMean = isMean[i] * (-1);
+        for (int j = 0; j < isCovMatrix[0].size(); j++) {
+            tempCov[j].push_back(tempMean[j]);
+            tempCov[j].push_back(-1.0);
+            tempQ.push_back(tempCov[j]);
         }
-        Q[i][numAssets] = -meanReturns[i];
-        Q[i][numAssets+1] = -1.0;
-        Q[numAssets][i] = -meanReturns[i];
-        Q[numAssets+1][i] = -1.0;
-    }
-    // Fill b vector
-    b[numAssets] = -targetReturn;
-    b[numAssets+1] = -1.0;
-    printMatrix(Q, "Q");
-    printVector(x0, "x");
-    printVector(b, "b");
 
-    // Solve for Qx = b by Conjugate Method
-    return conjugateGradient(Q, b, x0);
+        tempMean.push_back(0);
+        tempMean.push_back(0);
+
+        tempQ.push_back(tempMean);
+        tempQ.push_back(tempOnes);
+        isQ.push_back(tempQ);
+        tempQ.clear();
+    }
 }
-*/
-/*
-Vector Portfolio::conjugateGradient(const Matrix &Q, const Vector &b, const Vector &x0)
+
+void BacktestingEngine::optimizer(double epsilon)
 {
-    Vector  x_, s_pre, s_aft, p_pre, p_aft, Qp, alphaQp, weights;
+    Vector  s_k, s_k1, p_k, p_k1, Qp, alphaQp, weights;
     double alpha, beta, pTQp;
-    size_t n = b.size();
 
-    for (size_t k = 0; k < n; ++k)
+    for (int i = 0; i < numOfSlidingWindows; i++)
     {
-        x_ = x0;
-        s_pre = b - (Q * x0);// s: b - Qx
-        p_pre = s_pre; // set Initial Direction
-        //sTs = vectorDotProduct(s_pre, s_pre);
-        //printVector(x, "x");
-        //printVector(s, "s");
-        //printVector(p, "p");
-        //cout << "sTs : " << sTs << endl;
+        Vector x0(numAssets, 1/numAssets); // initializing vector x in Qx = b equation
+        x0.push_back(0.005); // initializing value for lambda
+        x0.push_back(0.005); // initializing value for mu
 
-        while (vectorDotProduct(s_pre, s_pre) > 1.0E-6) {
-            Qp = matrixVectorMultiplication(Q, p_pre); //printVector(Qp, "Q*p");
-            pTQp = vectorDotProduct(p_pre, Qp); //cout << "Dot Product " << pTQp << endl;
-            alpha = vectorDotProduct(s_pre, s_pre) / pTQp; // step size //cout << "alpha " << alpha << endl;
-            x_ = vectorAddition(x_, scalarMultiplication(p_pre, alpha)); //printVector(x, "x");
-            alphaQp = scalarMultiplication(Qp, alpha);
-            s_aft = vectorSubtraction(s_pre, alphaQp); //cout << "s_aft " << s_aft << endl;
-            beta = vectorDotProduct(s_aft, s_aft) / vectorDotProduct(s_pre, s_pre);
-            p_aft = vectorAddition(s_aft, scalarMultiplication(p_pre, beta));
-            s_pre = s_aft;
-            p_pre = p_aft;
-        }
-        for (int j = 0; j < x_.size()-2; j++)
+        s_k = isb - (isQ[i]*x0);
+        p_k = s_k;
+
+        while (s_k * s_k < epsilon)
         {
-            weights.push_back(x_[j]); // Add weights except Langrange Multipliers from x
+            alpha = (s_k * s_k)/(p_k * (isQ[i] * p_k));
+            x0 = x0 + (p_k * alpha);
+            s_k1 = s_k - ((isQ[i] * p_k) * alpha);
+            beta = (s_k1 * s_k1)/(s_k * s_k);
+            p_k1 = s_k1 + (p_k * beta);
+            s_k = s_k1;
+            p_k = p_k1;
         }
+        X.push_back(x0);
+        for (int j = 0; j < x0.size()-2; j++)
+        {
+            weights.push_back(x0[j]); // Add weights except Lagrange Multipliers from x
+        }
+        isWeights.push_back(weights);
+        weights.clear();
+        isLambda.push_back(x0[x0.size()-2]);
+        isMu.push_back(x0[x0.size()-1]);
     }
-    //cout << "Finished Optimization" << endl;
-    return weights;
 }
- */
-// Helper Functions
+
+void Portfolios::runBacktest()
+{
+    avgAbnormalReturn = 0.0;
+    cumulativeAvgAbnormalReturn = 0.0;
+    double variance = 0.0;
+    for (int i = 0; i < numOfSlidingWindows; i++)
+    {
+        actualAverageReturn.push_back(isWeights[i] * oosMean[i]); // Actual Average Return for Each Backtest Period
+        actualCovMatrix.push_back(isWeights[i] * (isCovMatrix[i] * isWeights[i]));// Actual Cov Matrix for each Backtest
+
+    }
+
+}

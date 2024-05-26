@@ -39,8 +39,8 @@ public:
 
     ~BacktestingEngine();
 
-private:
-    int isWindow, oosWindow, slidingWindow, numOfSlidingWindows;
+protected:
+    int isWindow, oosWindow, slidingWindow, numOfSlidingWindows;;
     Matrix AssetReturns;
     size_t numAssets, numReturns;
 
@@ -52,20 +52,20 @@ private:
     double targetReturn;
     Vector isb, isLambda, isMu;
     Matrix isMean, isWeights, X;
-    vector<Matrix> isCovMatrix, Q;
+    vector<Matrix> isCovMatrix, isQ;
 };
-
 
 class Portfolios : public BacktestingEngine {
 public:
     Portfolios(int isWindow_, int oosWindow_, int slidingWindow_, int numOfSlidingWindows_,
                const Matrix& AssetReturns_, double targetReturn_);
 
-private:
+    void runBacktest();
+protected:
     Vector actualAverageReturn;
-    Matrix actualCovMatrix;
-    double annualizedActualReturn;
-    double cumulativeActualReturn;
+    Vector actualCovMatrix;
+    double avgAbnormalReturn;
+    double cumulativeAvgAbnormalReturn;
     double standardDeviation;
     double portfolioSharpeRatio;
 };
