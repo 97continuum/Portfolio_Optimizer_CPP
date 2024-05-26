@@ -21,7 +21,7 @@ public:
     // IS Functions
     void calculateIsMean();
     void calculateIsCovMat();
-    void calculateIsQ();
+    void calculateQ();
     void optimizer(double epsilon);
 
     void setb(double targetReturn_)
@@ -37,6 +37,15 @@ public:
     void calculateOOSMean();
     void calculateOOSCovMatrix();
 
+    // Get Methods
+    Matrix getISMean();
+    vector<Matrix> getISCovMat();
+    Matrix getOSMean();
+    vector<Matrix> getOSCovMat();
+    vector<Matrix> getQ();
+    Matrix getWeights();
+
+    // Destructor
     ~BacktestingEngine();
 
 protected:
@@ -52,7 +61,7 @@ protected:
     double targetReturn;
     Vector isb, isLambda, isMu;
     Matrix isMean, isWeights, X;
-    vector<Matrix> isCovMatrix, isQ;
+    vector<Matrix> isCovMatrix, Q;
 };
 
 class Portfolios : public BacktestingEngine {

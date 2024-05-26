@@ -46,7 +46,7 @@ int  main (int  argc, char  *argv[])
     Vector tReturns(temp, temp + steps);
 
     // Backtesting Parameters
-    double epsilon = 10e-6;
+    double epsilon = 1e-7;
     int isWindow = 100;
     int oosWindow = 12;
     int slidingWindow = 12;
@@ -68,11 +68,19 @@ int  main (int  argc, char  *argv[])
         cout << "Running a Backtest for Portfolio with Target Returns of : " << tReturns[i]*100 << endl;
         Portfolios portfolio(isWindow, oosWindow, slidingWindow, numOfSlidingWindows, returnMatrix, tReturns[i]);
         portfolio.calculateIsMean();
+        //printMatrix(portfolio.getISMean(), "Mean Return in all different periods: ");
         portfolio.calculateIsCovMat();
+        //printMatrix(portfolio.getISCovMat()[0], "IS CovMatrix in Period 0");
+        //cout << portfolio.getISCovMat()[0][0].size() << endl;
         portfolio.calculateOOSMean();
+        //printMatrix(portfolio.getOSMean(), "OS Mean Return");
+        //cout << portfolio.getOSMean().size() << endl;
         portfolio.calculateOOSCovMatrix();
-        portfolio.calculateIsQ();
+        //printMatrix(portfolio.getOSCovMat()[0], "OOS Cov Matrix in Period 0");
+        portfolio.calculateQ();
+        //printMatrix(portfolio.getQ()[0], "Matrix Q in Period 0");
         portfolio.optimizer(epsilon);
+        //printMatrix(portfolio.getWeights(), "Weights");
         portfolio.runBacktest();
         TargetReturnsPortfolios.push_back(portfolio);
 
@@ -83,7 +91,7 @@ int  main (int  argc, char  *argv[])
         cout << "Portfolio's Actual Average Abnormal Return is: " << portfolio.getAvgAbnormalReturn() << endl;
         cout << "Portfolio's Cumulate Average Return is: " << portfolio.getCumulativeAvgAbnormalReturn() << endl;
 
-        resultsFile << tReturns[i] << ",";
+        resultsFile << tReturns[i]*100 << ",";
         for (int j = 0; j < actualAvgReturn.size()-1; j++){
             resultsFile << actualAvgReturn[j] << ",";
         }

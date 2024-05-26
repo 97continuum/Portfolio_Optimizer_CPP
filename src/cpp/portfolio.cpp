@@ -80,6 +80,13 @@ BacktestingEngine::BacktestingEngine(int isWindow_,int oosWindow_,int slidingWin
     isb = temp;
 }
 
+Matrix BacktestingEngine::getISMean(){ return isMean;};
+vector<Matrix> BacktestingEngine::getISCovMat() {return isCovMatrix;};
+Matrix BacktestingEngine::getOSMean() { return oosMean;};
+vector<Matrix> BacktestingEngine::getOSCovMat() { return oosCovMatrix;};
+vector<Matrix> BacktestingEngine::getQ() { return Q;};
+Matrix BacktestingEngine::getWeights() { return isWeights;};
+
 // Destructor for Backtesting Engine Class
 BacktestingEngine::~BacktestingEngine() = default;
 
@@ -153,7 +160,7 @@ void BacktestingEngine::calculateOOSCovMatrix()
 }
 
 // solve Optimization Problem by creating the System of Linear Equations needed for Conjugate Gradient Method
-void BacktestingEngine::calculateIsQ() {
+void BacktestingEngine::calculateQ() {
     Matrix tempQ;
     Matrix tempCov;
     Vector tempMean;
@@ -176,7 +183,7 @@ void BacktestingEngine::calculateIsQ() {
 
         tempQ.push_back(tempMean);
         tempQ.push_back(tempOnes);
-        isQ.push_back(tempQ);
+        Q.push_back(tempQ);
         tempQ.clear();
     }
 }
@@ -189,27 +196,45 @@ void BacktestingEngine::optimizer(double epsilon)
     for (int i = 0; i < numOfSlidingWindows; i++)
     {
         Vector x0(numAssets, 1/numAssets); // initializing vector x in Qx = b equation
-        x0.push_back(0.005); // initializing value for lambda
-        x0.push_back(0.005); // initializing value for mu
+        x0.push_back(0.1); // initializing value for lambda
+        x0.push_back(0.1); // initializing value for mu
 
-        s_k = isb - (isQ[i]*x0);
+        //printVector(x0, "x0");
+
+        s_k = isb - (Q[i]*x0);
+        //printVector(s_k, "s_k");
         p_k = s_k;
 
-        while (s_k * s_k < epsilon)
+        //double sTs = s_k * s_k;
+        //cout << "sTs " << sTs << endl;
+
+        while ((s_k * s_k) > epsilon)
         {
-            alpha = (s_k * s_k)/(p_k * (isQ[i] * p_k));
+            alpha = (s_k * s_k)/(p_k * (Q[i] * p_k));
+            //cout << "Alpha " << alpha << endl;
+
             x0 = x0 + (p_k * alpha);
-            s_k1 = s_k - ((isQ[i] * p_k) * alpha);
+            //printVector(x0, "x0");
+
+            s_k1 = s_k - ((Q[i] * p_k) * alpha);
+            //printVector(s_k1, "s_k1");
+
             beta = (s_k1 * s_k1)/(s_k * s_k);
+            //cout << "Beta " << beta << endl;
+
             p_k1 = s_k1 + (p_k * beta);
+            //printVector(p_k1, "p_k1");
+
             s_k = s_k1;
             p_k = p_k1;
         }
+        //printVector(x0, "x0");
         X.push_back(x0);
         for (int j = 0; j < x0.size()-2; j++)
         {
             weights.push_back(x0[j]); // Add weights except Lagrange Multipliers from x
         }
+        //printVector(weights, "weights");
         isWeights.push_back(weights);
         weights.clear();
         isLambda.push_back(x0[x0.size()-2]);
