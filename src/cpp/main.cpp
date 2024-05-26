@@ -16,12 +16,12 @@ using namespace std;
 
 int  main (int  argc, char  *argv[])
 {
-    int numberAssets = 5; // Initialize Number of Assets
-    int numberReturns = 10; // Max Length of Returns Data
+    int numberAssets = 83; // Initialize Number of Assets
+    int numberReturns = 700; // Max Length of Returns Data
 
     string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
     changeWorkingDirectory(desiredDirectory); // Change to Correct Working Directory
-    string fileName = "data/asset_returns_small.csv"; // Return Data FileName
+    string fileName = "data/asset_returns.csv"; // Return Data FileName
     checkFileInCurrentDirectory(fileName); // Check if File Exists and File Path is correct
 
     Matrix returnMatrix;
@@ -30,10 +30,10 @@ int  main (int  argc, char  *argv[])
         returnMatrix[i].resize(numberAssets);
     readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
 
-    Vector average = calculateAverage(returnMatrix);
-    printVector(average, "average");
-    Matrix covMatrix = calculateCovMatrix(returnMatrix, average);
-    printMatrix(covMatrix, "Cov Matrix");
+    // Vector average = calculateAverage(returnMatrix);
+    // printVector(average, "average");
+    // Matrix covMatrix = calculateCovMatrix(returnMatrix, average);
+    // printMatrix(covMatrix, "Cov Matrix");
 
     // Set list of increasing target Portfolio Returns
     const int steps = 20;
@@ -45,15 +45,6 @@ int  main (int  argc, char  *argv[])
     for (int i = 0; i < steps; ++i) {temp[i] = start + i * increment;}
     Vector tReturns(temp, temp + steps);
 
-    ofstream resultsFile; // Create CSV File to send results to
-    resultsFile.open("data/results.csv");
-    resultsFile << "Target Returns,";
-    for (int i = 0; i < numberAssets - 1; ++i)
-    {
-        resultsFile << "Asset " << i+1 << ",";
-    }
-    resultsFile << "Asset "<< numberAssets << endl;
-
     // Backtesting Parameters
     double epsilon = 10e-6;
     int isWindow = 100;
@@ -61,53 +52,42 @@ int  main (int  argc, char  *argv[])
     int slidingWindow = 12;
     int numOfSlidingWindows = (numberReturns - isWindow - oosWindow) / (slidingWindow);
 
-
-    /* Outer loop for each backtesting range
-        // In Sample Start and End Date for Portfolio Building
-        // Generate 20 Portfolios
-        // Calculate return of each portfolio
-        // Find average return by averaging the return of each portfolio
-        // calculate actual average return: rT*w
-        // Find covariance matrix for OOS data
-    */
-
-    int startIS, endIS, startOOS, endOOS; // indexes to control sliding window
-
-    /*
-    // Outer loop for each backtesting range
-    for (int i = 0; i <= numOfSlidingWindows; i++)
+    ofstream resultsFile; // Create CSV File to send results to
+    resultsFile.open("data/results.csv");
+    resultsFile << "Target Returns,";
+    for (int i = 0; i < numOfSlidingWindows - 1; ++i)
     {
-        startIS = (slidingWindow * i);
-        endIS = startIS + (isWindow - 1);
-        startOOS = startIS + isWindow;
-        endOOS = startOOS + (oosWindow - 1);
-        //cout << "Start IS: " << startIS << " End IS: " << endIS << " Start OOS: " << startOOS << " End OOS: " << endOOS;
-        //cout << endl;
-        // Run Portfolio Optimizer over every Return Target
-        for (int j = 0; j < 1; j++) // change to 20 later
-        {
-            cout << "For Portfolio with Target Return " << tReturns[j]*100 << "%" << endl;
-            cout << "Start IS: " << startIS << " End IS: " << endIS << endl;
-            Matrix inSampleReturns = sliceMatrixByRows(returns, startIS, endIS);
+        resultsFile << "Backtest Period: " << i+1 << ",";
+    }
+    resultsFile << "Backtest Period: " << numOfSlidingWindows << endl;
 
-            //Portfolio portfolio(inSampleReturns, tReturns[j], numberAssets, );
-            // Design
-            /* Initialize a Portfolio Object with spe
-             *
-             *
+    vector<Portfolios> TargetReturnsPortfolios;
+
+    for (int i = 0; i < 20; i++)
+    {
+        cout << "Running a Backtest for Portfolio with Target Returns of : " << tReturns[i]*100 << endl;
+        Portfolios portfolio(isWindow, oosWindow, slidingWindow, numOfSlidingWindows, returnMatrix, tReturns[i]);
+        portfolio.calculateIsMean();
+        portfolio.calculateIsCovMat();
+        portfolio.calculateOOSMean();
+        portfolio.calculateOOSCovMatrix();
+        portfolio.calculateIsQ();
+        portfolio.optimizer(epsilon);
+        portfolio.runBacktest();
+        TargetReturnsPortfolios.push_back(portfolio);
+
+        cout << "With a Target Return of " << tReturns[i]*100 << " the actual return of the Portfolio is: " << endl;
+        Vector actualAvgReturn = portfolio.getActualAverageReturn();
+        printVector(actualAvgReturn, "Actual Average Returns");
+        cout << "Portfolio's Sharpe Ratio is: " << portfolio.getPortfolioSharpeRatio() << endl;
+        cout << "Portfolio's Actual Average Abnormal Return is: " << portfolio.getAvgAbnormalReturn() << endl;
+        cout << "Portfolio's Cumulate Average Return is: " << portfolio.getCumulativeAvgAbnormalReturn() << endl;
+
+        resultsFile << tReturns[i] << ",";
+        for (int j = 0; j < actualAvgReturn.size()-1; j++){
+            resultsFile << actualAvgReturn[j] << ",";
         }
-
-    } */
-
-/*
-    Portfolio portfolio(returns, targetReturns, numberAssets, numberReturns);
-    Vector portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns
-    //printVector(portfolioMeanReturns, "Mean Returns");
-    Matrix portfolioCovMatrix = portfolio.calculateCovarianceMatrix(); // Calculate Cov Matrix
-    //printMatrix(portfolioCovMatrix, "Cov Matrix"); // Print Covariance Matrix
-
-    Vector weights = portfolio.solveOptimization();
-    printVector(weights, "of Portfolio Weights - last two entries are Lagrange multiplier constants");
-*/
+        resultsFile << actualAvgReturn[actualAvgReturn.size()-1] << endl;
+    }
     return 0;
 }

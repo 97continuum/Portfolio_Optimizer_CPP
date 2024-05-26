@@ -226,7 +226,20 @@ void Portfolios::runBacktest()
     {
         actualAverageReturn.push_back(isWeights[i] * oosMean[i]); // Actual Average Return for Each Backtest Period
         actualCovMatrix.push_back(isWeights[i] * (isCovMatrix[i] * isWeights[i]));// Actual Cov Matrix for each Backtest
-
+        avgAbnormalReturn = ((i * avgAbnormalReturn) + actualAverageReturn[i]) / (i + 1);
+        cumulativeAvgAbnormalReturn += isWeights[i] * oosMean[i];
     }
-
+    for (int j = 0; j < numOfSlidingWindows; j++)
+    {
+        variance += pow((isWeights[j] * oosMean[j]) - avgAbnormalReturn, 2.0);
+    }
+    standardDeviation = sqrt(variance/numOfSlidingWindows);
+    portfolioSharpeRatio = avgAbnormalReturn / standardDeviation;
 }
+
+Vector Portfolios::getActualAverageReturn(){ return actualAverageReturn;}
+Vector Portfolios::getActualCovMatrix(){ return actualCovMatrix;};
+double Portfolios::getAvgAbnormalReturn(){ return avgAbnormalReturn;};
+double Portfolios::getCumulativeAvgAbnormalReturn(){ return cumulativeAvgAbnormalReturn;};
+double Portfolios::getStd(){return standardDeviation;};
+double Portfolios::getPortfolioSharpeRatio() const {return portfolioSharpeRatio;}

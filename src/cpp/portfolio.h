@@ -61,6 +61,12 @@ public:
                const Matrix& AssetReturns_, double targetReturn_);
 
     void runBacktest();
+    Vector getActualAverageReturn();
+    Vector getActualCovMatrix();
+    double getAvgAbnormalReturn();
+    double getCumulativeAvgAbnormalReturn();
+    double getStd();
+    double getPortfolioSharpeRatio() const;
 protected:
     Vector actualAverageReturn;
     Vector actualCovMatrix;
@@ -69,25 +75,5 @@ protected:
     double standardDeviation;
     double portfolioSharpeRatio;
 };
-
-
-/*
-class Portfolio {
-public:
-    Portfolio(const vector< Vector >& returns, double targetReturn, int numAssets, int numPeriods);
-
-    Vector calculateMeanReturn(); // Function to calculate
-    Matrix calculateCovarianceMatrix(); // function to calculate Covariance Matrix
-    Vector solveOptimization(); // Function to create Qx = b systems of linear equations
-    static Vector conjugateGradient(const Matrix &Q, const Vector &b, const Vector &x0) ; // Function to solve Qx = b equation
-
-private:
-    Matrix returns; // Matrix to Store Returns
-    double targetReturn; // Variable to hold Target Return for Portfolio
-    int numAssets; // Total Number of Assets
-    int numPeriods; // Total Number of Periods
-    Vector meanReturns; // The vector of Mean Returns for N Assets
-    Matrix covarianceMatrix; // Variance Covariance Matrix for N Assets
-};*/
 
 #endif //COURSEWORK_PORTFOLIO_H
