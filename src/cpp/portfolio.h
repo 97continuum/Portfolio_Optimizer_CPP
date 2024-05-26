@@ -11,6 +11,7 @@
 using namespace std;
 
 Vector calculateAverage(const Matrix& m);
+Matrix calculateCovMatrix(const Matrix& m);
 Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end);
 /*
 class Portfolio {

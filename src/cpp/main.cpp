@@ -32,7 +32,8 @@ int  main (int  argc, char  *argv[])
 
     Vector average = calculateAverage(returnMatrix);
     printVector(average, "average");
-
+    Matrix covMatrix = calculateCovMatrix(returnMatrix);
+    printMatrix(covMatrix, "Cov Matrix");
 
     // Set list of increasing target Portfolio Returns
     const int steps = 20;

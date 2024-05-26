@@ -12,10 +12,7 @@ using namespace std;
 
 Vector calculateAverage(const Matrix& m)
 {
-    if (m.empty())
-    {
-        return {};
-    }
+    if (m.empty()){return {};}
     size_t numRows = m.size();
     size_t numCols = m[0].size();
     Vector result(numCols, 0.0);
@@ -34,6 +31,26 @@ Vector calculateAverage(const Matrix& m)
     }
     return result;
 }
+
+Matrix calculateCovMatrix(const Matrix& m)
+{
+    size_t numCols = m[0].size();
+    size_t numRows = m.size();
+    Matrix covMatrix(numCols, Vector(numCols, 0.0));
+    Vector meanReturns = calculateAverage(m);
+
+    for (size_t i = 0; i < numCols; ++i) {
+        for (size_t j = 0; j < numCols; ++j) {
+            double cov = 0.0;
+            for (size_t k = 0; k < numRows; ++k) {
+                cov += (m[k][i] - meanReturns[i]) * (m[k][j] - meanReturns[j]);
+            }
+            covMatrix[i][j] = cov / (numRows - 1);
+        }
+    }
+    return covMatrix;
+}
+
 
 /*
 // Constructor for Portfolio Class
