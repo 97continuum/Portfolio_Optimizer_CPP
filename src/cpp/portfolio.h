@@ -10,27 +10,25 @@
 
 using namespace std;
 
-template <typename T>
-vector< vector<T> > sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end);
-
+Vector calculateAverage(const Matrix& m);
+Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end);
+/*
 class Portfolio {
 public:
     Portfolio(const vector< Vector >& returns, double targetReturn, int numAssets, int numPeriods);
 
     Vector calculateMeanReturn(); // Function to calculate
-    MatrixcalculateCovarianceMatrix(); // function to calculate Covariance Matrix
+    Matrix calculateCovarianceMatrix(); // function to calculate Covariance Matrix
     Vector solveOptimization(); // Function to create Qx = b systems of linear equations
-    static Vector conjugateGradient(const Matrix &Q,
-                                          const Vector &b,
-                                          const Vector &x0) ; // Function to solve Qx = b equation
+    static Vector conjugateGradient(const Matrix &Q, const Vector &b, const Vector &x0) ; // Function to solve Qx = b equation
 
 private:
-    Matrixreturns; // Matrix to Store Returns
+    Matrix returns; // Matrix to Store Returns
     double targetReturn; // Variable to hold Target Return for Portfolio
     int numAssets; // Total Number of Assets
     int numPeriods; // Total Number of Periods
     Vector meanReturns; // The vector of Mean Returns for N Assets
-    MatrixcovarianceMatrix; // Variance Covariance Matrix for N Assets
-};
+    Matrix covarianceMatrix; // Variance Covariance Matrix for N Assets
+};*/
 
 #endif //COURSEWORK_PORTFOLIO_H

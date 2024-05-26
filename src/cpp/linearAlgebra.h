@@ -13,16 +13,18 @@ using namespace std;
 typedef vector<double> Vector;
 typedef vector<Vector> Matrix;
 
-void printMatrix(const Matrix& matrix, const string& matrixName);
-void printVector(const Vector& vector, const string& vectorName);
-Vector vectorAddition(const Vector& a, const Vector& b);
-Vector vectorSubtraction(const Vector& a, const Vector& b);
-double vectorDotProduct(const Vector& a, const Vector& b);
-Vector scalarMultiplication(const Vector& vector, double scalar);
-Vector scalarDivision(const Vector& vector, double scalar);
-Vector matrixVectorMultiplication(const Matrix& matrix, const Vector& vector);
-double vectorNorm(const Vector& vector);
-Matrix matrixMultiplication(const Matrix& A, const Matrix& B);
+Vector operator+(const Vector& a, const Vector& b);
+Vector operator-(const Vector& a, const Vector& b);
+Vector operator*(const Vector& vector, double scalar);
+Vector operator/(const Vector& vector, double scalar);
+Vector operator*(const Matrix& matrix, const Vector& vector);
+double operator*(const Vector& a, const Vector& b);
+
+Matrix operator+(const Matrix& a, const Matrix& b);
+Matrix operator-(const Matrix& a, const Matrix& b);
+Matrix operator*(const Matrix& a, double b);
+Matrix operator*(const Matrix& A, const Matrix& B);
+Matrix operator/(const Matrix& a, double b);
 
 // unit tests
 void testVectorAdd();
@@ -32,5 +34,8 @@ void testScalarMult();
 void testMatVecMult();
 void testMatMatMult();
 void testAllFunctions();
+
+void printMatrix(const Matrix& matrix, const string& matrixName);
+void printVector(const Vector& vector, const string& vectorName);
 
 #endif //COURSEWORK_LINEARALGEBRA_H

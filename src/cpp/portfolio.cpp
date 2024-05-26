@@ -2,13 +2,40 @@
 // Created by Talha Jamal on 20/05/2024.
 //
 
-#include "portfolio.h"
 #include <numeric>
+#include "portfolio.h"
 #include "linearAlgebra.h"
 #include <stdexcept>
+#include <cmath>
 
 using namespace std;
 
+Vector calculateAverage(const Matrix& m)
+{
+    if (m.empty())
+    {
+        return {};
+    }
+    size_t numRows = m.size();
+    size_t numCols = m[0].size();
+    Vector result(numCols, 0.0);
+    // Sum each column's elements
+    for (int i = 0; i < numRows; ++i)
+    {
+        for (int j = 0; j < numCols; ++j)
+        {
+            result[j] += m[i][j];
+        }
+    }
+    // Divide by number of Rows to get the mean
+    for (int i = 0; i < numCols; ++i)
+    {
+        result[i] /= numRows;
+    }
+    return result;
+}
+
+/*
 // Constructor for Portfolio Class
 Portfolio::Portfolio(const Matrix &returns, double targetReturn, int numAssets, int numPeriods)
     : returns(returns), targetReturn(targetReturn), numAssets(numAssets), numPeriods(numPeriods){}
@@ -28,7 +55,7 @@ Vector Portfolio::calculateMeanReturn()
 }
 
 // Calculate Covariance Matrix
-MatrixPortfolio::calculateCovarianceMatrix() {
+Matrix Portfolio::calculateCovarianceMatrix() {
     //size_t numAssets = returns.size();
     //size_t numPeriods = returns[0].size();
     covarianceMatrix.resize(numAssets, Vector(numAssets, 0.0));
@@ -49,12 +76,14 @@ MatrixPortfolio::calculateCovarianceMatrix() {
     }
     return covarianceMatrix;
 }
+ */
 
+/*
 // solve Optimization Problem by creating the System of Linear Equations needed for Conjugate Gradient Method
 Vector Portfolio::solveOptimization()
 {
     //size_t n = meanReturns.size(); // number of Assets
-    MatrixQ(numAssets + 2, Vector(numAssets + 2, 0.0)); // Dimensions of Matrix Q
+    Matrix Q(numAssets + 2, Vector(numAssets + 2, 0.0)); // Dimensions of Matrix Q
     Vector b(numAssets + 2, 0.0); // Dimensions of Vector b
     Vector x0(numAssets, 1.0/numAssets); // Dimensions of Vector X
     x0.push_back(0.005);
@@ -75,16 +104,16 @@ Vector Portfolio::solveOptimization()
     // Fill b vector
     b[numAssets] = -targetReturn;
     b[numAssets+1] = -1.0;
-    //printMatrix(Q, "Q");
-    //printVector(b, "b");
+    printMatrix(Q, "Q");
+    printVector(x0, "x");
+    printVector(b, "b");
 
     // Solve for Qx = b by Conjugate Method
     return conjugateGradient(Q, b, x0);
 }
-
-Vector Portfolio::conjugateGradient(const Matrix &Q,
-                                                 const Vector &b,
-                                                 const Vector &x0)
+*/
+/*
+Vector Portfolio::conjugateGradient(const Matrix &Q, const Vector &b, const Vector &x0)
 {
     Vector  x_, s_pre, s_aft, p_pre, p_aft, Qp, alphaQp, weights;
     double alpha, beta, pTQp;
@@ -93,7 +122,7 @@ Vector Portfolio::conjugateGradient(const Matrix &Q,
     for (size_t k = 0; k < n; ++k)
     {
         x_ = x0;
-        s_pre = vectorSubtraction(b, matrixVectorMultiplication(Q, x0)); // s: b - Qx
+        s_pre = b - (Q * x0);// s: b - Qx
         p_pre = s_pre; // set Initial Direction
         //sTs = vectorDotProduct(s_pre, s_pre);
         //printVector(x, "x");
@@ -121,18 +150,19 @@ Vector Portfolio::conjugateGradient(const Matrix &Q,
     //cout << "Finished Optimization" << endl;
     return weights;
 }
+ */
 // Helper Functions
 
 // Slice Matrix
-template <typename T>
-vector< vector<T> > sliceMatrixByRows(const vector<vector<int>>& matrix,
-                                                int row_start, int row_end) {
+Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end)
+{
+    cout << matrix[0].size() << endl;
     // Check for valid range
-    if (row_start > row_end || row_end > matrix.size())
+    if (row_start > row_end || row_end > matrix[0].size())
     {
         throw out_of_range("Invalid slice range");
     }
-    vector<vector<int>> submatrix(matrix.begin() + row_start, matrix.begin() + row_end);
+    Matrix submatrix(matrix.begin() + row_start, matrix.begin() + row_end);
     return submatrix;
 }
 

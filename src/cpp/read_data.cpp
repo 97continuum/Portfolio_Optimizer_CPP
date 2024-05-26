@@ -3,7 +3,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "csv.h"  // Assuming you have a Csv class defined somewhere
+#include "csv.h"
+#include "linearAlgebra.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ double string_to_double(const string& s) {
     }
 }
 
-void readData(double **data, const string& fileName) {
+void readData(Matrix& data, const string& fileName) {
     //cout << "Attempting to open file: " << fileName << endl;
 
     ifstream file(fileName);
@@ -34,7 +35,8 @@ void readData(double **data, const string& fileName) {
     while (csv.getline(line) != 0) {
         for (int j = 0; j < csv.getnfield(); j++) {
             double temp = string_to_double(csv.getfield(j));
-            data[j][i] = temp;
+            //data[j][i] = temp;
+            data[i][j] = temp;
         }
         i++;
     }

@@ -16,31 +16,23 @@ using namespace std;
 
 int  main (int  argc, char  *argv[])
 {
-    int numberAssets = 83; // Initialize Number of Assets
-    int numberReturns = 700; // Max Length of Returns Data
+    int numberAssets = 5; // Initialize Number of Assets
+    int numberReturns = 10; // Max Length of Returns Data
 
     string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
     changeWorkingDirectory(desiredDirectory); // Change to Correct Working Directory
-    string fileName = "data/asset_returns.csv"; // Return Data FileName
+    string fileName = "data/asset_returns_small.csv"; // Return Data FileName
     checkFileInCurrentDirectory(fileName); // Check if File Exists and File Path is correct
 
-    ofstream resultsFile; // Create CSV File to send results to
-    resultsFile.open("data/results.csv");
-    resultsFile << "Target Returns,";
-    for (int i = 0; i < numberAssets - 1; i++){
-        resultsFile << "Asset " << i+1 << ",";
-    }
-    resultsFile << numberAssets << endl;
-
-    auto **returnMatrix = new double*[numberAssets]; // a matrix to store the return data
-    //allocate memory for return data
-    for(int i=0;i<numberAssets;i++)
-        returnMatrix[i]=new double[numberReturns];
-
+    Matrix returnMatrix;
+    returnMatrix.resize(numberReturns);
+    for(int i=0;i<numberReturns;i++)
+        returnMatrix[i].resize(numberAssets);
     readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
-    Matrix returns = convertToVectorMatrix(returnMatrix,
-                                                                     numberAssets,
-                                                                     numberReturns);// Convert to vector of vectors
+
+    Vector average = calculateAverage(returnMatrix);
+    printVector(average, "average");
+
 
     // Set list of increasing target Portfolio Returns
     const int steps = 20;
@@ -49,10 +41,17 @@ int  main (int  argc, char  *argv[])
     double end = 0.1;
     double increment = (end - start) / (steps - 1);
 
-    for (int i = 0; i < steps; ++i) {
-        temp[i] = start + i * increment;
-    }
+    for (int i = 0; i < steps; ++i) {temp[i] = start + i * increment;}
     Vector tReturns(temp, temp + steps);
+
+    ofstream resultsFile; // Create CSV File to send results to
+    resultsFile.open("data/results.csv");
+    resultsFile << "Target Returns,";
+    for (int i = 0; i < numberAssets - 1; i++)
+    {
+        resultsFile << "Asset " << i+1 << ",";
+    }
+    resultsFile << numberAssets << endl;
 
     // Backtesting Parameters
     double epsilon = 10e-6;
@@ -60,7 +59,7 @@ int  main (int  argc, char  *argv[])
     int oosWindow = 12;
     int slidingWindow = 12;
     int numOfSlidingWindows = (numberReturns - isWindow - oosWindow) / (slidingWindow);
-    //cout << numOfSlidingWindows << endl;
+
 
     /* Outer loop for each backtesting range
         // In Sample Start and End Date for Portfolio Building
@@ -73,6 +72,7 @@ int  main (int  argc, char  *argv[])
 
     int startIS, endIS, startOOS, endOOS; // indexes to control sliding window
 
+    /*
     // Outer loop for each backtesting range
     for (int i = 0; i <= numOfSlidingWindows; i++)
     {
@@ -86,28 +86,27 @@ int  main (int  argc, char  *argv[])
         for (int j = 0; j < 1; j++) // change to 20 later
         {
             cout << "For Portfolio with Target Return " << tReturns[j]*100 << "%" << endl;
-            MatrixinSampleReturns = sliceMatrixByRows(returns, startIS, endIS);
+            cout << "Start IS: " << startIS << " End IS: " << endIS << endl;
+            Matrix inSampleReturns = sliceMatrixByRows(returns, startIS, endIS);
+
             //Portfolio portfolio(inSampleReturns, tReturns[j], numberAssets, );
             // Design
             /* Initialize a Portfolio Object with spe
              *
-             */
+             *
         }
 
-    }
+    } */
 
 /*
     Portfolio portfolio(returns, targetReturns, numberAssets, numberReturns);
     Vector portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns
     //printVector(portfolioMeanReturns, "Mean Returns");
-    MatrixportfolioCovMatrix = portfolio.calculateCovarianceMatrix(); // Calculate Cov Matrix
+    Matrix portfolioCovMatrix = portfolio.calculateCovarianceMatrix(); // Calculate Cov Matrix
     //printMatrix(portfolioCovMatrix, "Cov Matrix"); // Print Covariance Matrix
 
     Vector weights = portfolio.solveOptimization();
-    printVector(weights, "of Portfolio Weights - last two entries are Langrange multiplier constants");
+    printVector(weights, "of Portfolio Weights - last two entries are Lagrange multiplier constants");
 */
-
-    // Delete Memory from Double Pointer
-    deleteDoublePointer(returnMatrix, numberAssets);
     return 0;
 }
