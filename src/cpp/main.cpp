@@ -32,7 +32,7 @@ int  main (int  argc, char  *argv[])
 
     Vector average = calculateAverage(returnMatrix);
     printVector(average, "average");
-    Matrix covMatrix = calculateCovMatrix(returnMatrix);
+    Matrix covMatrix = calculateCovMatrix(returnMatrix, average);
     printMatrix(covMatrix, "Cov Matrix");
 
     // Set list of increasing target Portfolio Returns
@@ -48,11 +48,11 @@ int  main (int  argc, char  *argv[])
     ofstream resultsFile; // Create CSV File to send results to
     resultsFile.open("data/results.csv");
     resultsFile << "Target Returns,";
-    for (int i = 0; i < numberAssets - 1; i++)
+    for (int i = 0; i < numberAssets - 1; ++i)
     {
         resultsFile << "Asset " << i+1 << ",";
     }
-    resultsFile << numberAssets << endl;
+    resultsFile << "Asset "<< numberAssets << endl;
 
     // Backtesting Parameters
     double epsilon = 10e-6;

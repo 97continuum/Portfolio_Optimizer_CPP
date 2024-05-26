@@ -10,9 +10,66 @@
 
 using namespace std;
 
-Vector calculateAverage(const Matrix& m);
-Matrix calculateCovMatrix(const Matrix& m);
 Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end);
+Vector calculateAverage(const Matrix& m);
+Matrix calculateCovMatrix(const Matrix& m, Vector meanReturns);
+
+class BacktestingEngine {
+public:
+    BacktestingEngine(int isWindow_,int oosWindow_,int slidingWindow_,int numOfSlidingWindows_,
+                      const Matrix& AssetReturns_, double targetReturn_);
+
+    // OOS Functions
+    void calculateOOSMean();
+    void calculateOOSCovMatrix();
+
+    // IS Functions
+    void calculateIsMean();
+    void calculateIsCovMat();
+    void calculateIsQ();
+    void optimizer(double epsilon);
+
+    void setb(double targetReturn_)
+    {
+        targetReturn = targetReturn_;
+        Vector b(numAssets, 0.0);
+        b.push_back(-targetReturn);
+        b.push_back(-1);
+        isb = b;
+    }
+    ~BacktestingEngine();
+private:
+    int isWindow, oosWindow, slidingWindow, numOfSlidingWindows;
+    Matrix AssetReturns;
+    size_t numAssets, numReturns;
+
+    // OOS Variables
+    Vector oosMean;
+    vector<Matrix> oosCovMatrix;
+
+    // IS Variables - including variables needed for Portfolio Optimization
+    double targetReturn;
+    Vector isb, isLambda, isMu;
+    Matrix isMean, isWeights, X;
+    vector<Matrix> isCovMatrix, Q;
+};
+
+
+class Portfolios : public BacktestingEngine {
+public:
+    Portfolios(int isWindow_, int oosWindow_, int slidingWindow_, int numOfSlidingWindows_,
+               const Matrix& AssetReturns_, double targetReturn_);
+
+private:
+    Vector actualAverageReturn;
+    Matrix actualCovMatrix;
+    double annualizedActualReturn;
+    double cumulativeActualReturn;
+    double standardDeviation;
+    double portfolioSharpeRatio;
+};
+
+
 /*
 class Portfolio {
 public:

@@ -10,6 +10,19 @@
 
 using namespace std;
 
+// Slice Matrix
+Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end)
+{
+    cout << matrix[0].size() << endl;
+    // Check for valid range
+    if (row_start > row_end || row_end > matrix[0].size())
+    {
+        throw out_of_range("Invalid slice range");
+    }
+    Matrix submatrix(matrix.begin() + row_start, matrix.begin() + row_end);
+    return submatrix;
+}
+
 Vector calculateAverage(const Matrix& m)
 {
     if (m.empty()){return {};}
@@ -32,12 +45,12 @@ Vector calculateAverage(const Matrix& m)
     return result;
 }
 
-Matrix calculateCovMatrix(const Matrix& m)
+Matrix calculateCovMatrix(const Matrix& m, Vector meanReturns)
 {
     size_t numCols = m[0].size();
     size_t numRows = m.size();
     Matrix covMatrix(numCols, Vector(numCols, 0.0));
-    Vector meanReturns = calculateAverage(m);
+    //Vector meanReturns = calculateAverage(m);
 
     for (size_t i = 0; i < numCols; ++i) {
         for (size_t j = 0; j < numCols; ++j) {
@@ -50,6 +63,32 @@ Matrix calculateCovMatrix(const Matrix& m)
     }
     return covMatrix;
 }
+
+// Backtesting Class Constructor
+BacktestingEngine::BacktestingEngine(int isWindow_,int oosWindow_,int slidingWindow_,int numOfSlidingWindows_,
+                                     const Matrix& AssetReturns_, double targetReturn_):
+                                     isWindow(isWindow_),oosWindow(oosWindow_),slidingWindow(slidingWindow_),
+                                     numOfSlidingWindows(numOfSlidingWindows_),AssetReturns(AssetReturns_),
+                                     targetReturn(targetReturn_)
+{
+    numReturns = AssetReturns.size();
+    numAssets = AssetReturns[0].size();
+    targetReturn = targetReturn_;
+    Vector temp(numAssets, 0.0);
+    temp.push_back(-targetReturn_);
+    temp.push_back(-1);
+    isb = temp;
+}
+
+// Destructor for Backtesting Engine Class
+BacktestingEngine::~BacktestingEngine() = default;
+
+// Constructor for Portfolios Class
+Portfolios::Portfolios(int isWindow_, int oosWindow_, int slidingWindow_, int numOfSlidingWindows_,
+                       const Matrix& AssetReturns_, double targetReturn_)
+        : BacktestingEngine(isWindow_, oosWindow_, slidingWindow_, numOfSlidingWindows_, AssetReturns_, targetReturn_) {}
+
+
 
 
 /*
@@ -169,19 +208,3 @@ Vector Portfolio::conjugateGradient(const Matrix &Q, const Vector &b, const Vect
 }
  */
 // Helper Functions
-
-// Slice Matrix
-Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end)
-{
-    cout << matrix[0].size() << endl;
-    // Check for valid range
-    if (row_start > row_end || row_end > matrix[0].size())
-    {
-        throw out_of_range("Invalid slice range");
-    }
-    Matrix submatrix(matrix.begin() + row_start, matrix.begin() + row_end);
-    return submatrix;
-}
-
-
-// Backtesting Class
