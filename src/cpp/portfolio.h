@@ -18,11 +18,6 @@ class BacktestingEngine {
 public:
     BacktestingEngine(int isWindow_,int oosWindow_,int slidingWindow_,int numOfSlidingWindows_,
                       const Matrix& AssetReturns_, double targetReturn_);
-
-    // OOS Functions
-    void calculateOOSMean();
-    void calculateOOSCovMatrix();
-
     // IS Functions
     void calculateIsMean();
     void calculateIsCovMat();
@@ -37,14 +32,20 @@ public:
         b.push_back(-1);
         isb = b;
     }
+
+    // OOS Functions
+    void calculateOOSMean();
+    void calculateOOSCovMatrix();
+
     ~BacktestingEngine();
+
 private:
     int isWindow, oosWindow, slidingWindow, numOfSlidingWindows;
     Matrix AssetReturns;
     size_t numAssets, numReturns;
 
     // OOS Variables
-    Vector oosMean;
+    Matrix oosMean;
     vector<Matrix> oosCovMatrix;
 
     // IS Variables - including variables needed for Portfolio Optimization

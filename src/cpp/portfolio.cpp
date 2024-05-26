@@ -88,7 +88,69 @@ Portfolios::Portfolios(int isWindow_, int oosWindow_, int slidingWindow_, int nu
                        const Matrix& AssetReturns_, double targetReturn_)
         : BacktestingEngine(isWindow_, oosWindow_, slidingWindow_, numOfSlidingWindows_, AssetReturns_, targetReturn_) {}
 
+void BacktestingEngine::calculateIsMean()
+{
+    Matrix M; // Matrix to Store Returns for each IS Period
+    Vector V; // Store Mean Return for each IS Period -> Mean Return Vectors for each window pushed to isMean Matrix
+    for (int i = 0; i < numOfSlidingWindows; i++)
+    {
+        for (int j = slidingWindow * i; j < (slidingWindow * i) + isWindow; j++)
+        {
+            M.push_back(AssetReturns[j]);
+        }
+        V = calculateAverage(M);
+        isMean.push_back(V);
+        M.clear();
+    }
+}
 
+void BacktestingEngine::calculateIsCovMat()
+{
+    Matrix M1; // Matrix to Store Returns for each OOS Period
+    Matrix M2; // Matrix to store Cov Matrix for each IS Period -> Each IS Window's CovMat pushed to oosCovMatrix
+    for (int i = 0; i < numOfSlidingWindows; i++)
+    {
+        for (int j = slidingWindow * i; j < (slidingWindow * i) + isWindow; j++)
+        {
+            M1.push_back(AssetReturns[j]);
+        }
+        M2 = calculateCovMatrix(M1, isMean[i]);
+        isCovMatrix.push_back(M2);
+        M1.clear();
+    }
+}
+
+void BacktestingEngine::calculateOOSMean()
+{
+    Matrix M; // Matrix to Store Returns for each OOS Period
+    Vector V; // Store Mean Return for each OOS Period -> Mean Return Vectors for each window pushed to oosMean Matrix
+    for (int i = 0; i < numOfSlidingWindows; i++)
+    {
+        for (int j = isWindow + (slidingWindow * i); j < isWindow + (slidingWindow * i) + oosWindow; j++)
+        {
+            M.push_back(AssetReturns[j]);
+        }
+        V = calculateAverage(M);
+        oosMean.push_back(V);
+        M.clear();
+    }
+}
+
+void BacktestingEngine::calculateOOSCovMatrix()
+{
+    Matrix M1; // Matrix to Store Returns for each OOS Period
+    Matrix M2; // Matrix to store Cov Matrix for each IS Period -> Each IS Window's CovMat pushed to oosCovMatrix
+    for (int i = 0; i < numOfSlidingWindows; i++)
+    {
+        for (int j = isWindow + (slidingWindow * i); j < isWindow + (slidingWindow * i) + oosWindow; j++)
+        {
+            M1.push_back(AssetReturns[j]);
+        }
+        M2 = calculateCovMatrix(M1, oosMean[i]);
+        oosCovMatrix.push_back((M2));
+        M1.clear();
+    }
+}
 
 
 /*
