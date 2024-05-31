@@ -10,19 +10,6 @@
 
 using namespace std;
 
-// Slice Matrix
-Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end)
-{
-    cout << matrix[0].size() << endl;
-    // Check for valid range
-    if (row_start > row_end || row_end > matrix[0].size())
-    {
-        throw out_of_range("Invalid slice range");
-    }
-    Matrix submatrix(matrix.begin() + row_start, matrix.begin() + row_end);
-    return submatrix;
-}
-
 // Function to calculate the mean of a vector
 double calculateAverage(const std::vector<double>& avgReturns) {
     double sum = accumulate(avgReturns.begin(), avgReturns.end(), 0.0);
