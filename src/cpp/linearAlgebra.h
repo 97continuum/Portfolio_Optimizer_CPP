@@ -8,14 +8,34 @@
 #include <iostream>
 #include "vector"
 
-std::vector<double> vectorAddition(const std::vector<double>& a, const std::vector<double>& b);
-std::vector<double> vectorSubtraction(const std::vector<double>& a, const std::vector<double>& b);
-double vectorDotProduct(const std::vector<double>& a, const std::vector<double>& b);
-std::vector<double> scalarMultiplication(const std::vector<double>& vector, double scalar);
-std::vector<double> matrixVectorMultiplication(const std::vector< std::vector<double> >& matrix,
-                                               const std::vector<double>& vector);
-double vectorNorm(const std::vector<double>& vector);
-std::vector< std::vector<double> > matrixMultiplication(const std::vector< std::vector<double> >& A,
-                                                      const std::vector< std::vector<double> >& B);
+using namespace std;
+
+typedef vector<double> Vector;
+typedef vector<Vector> Matrix;
+
+Vector operator+(const Vector& a, const Vector& b);
+Vector operator-(const Vector& a, const Vector& b);
+Vector operator*(const Vector& vector, double scalar);
+Vector operator/(const Vector& vector, double scalar);
+Vector operator*(const Matrix& matrix, const Vector& vector);
+double operator*(const Vector& a, const Vector& b);
+
+Matrix operator+(const Matrix& a, const Matrix& b);
+Matrix operator-(const Matrix& a, const Matrix& b);
+Matrix operator*(const Matrix& a, double b);
+Matrix operator*(const Matrix& A, const Matrix& B);
+Matrix operator/(const Matrix& a, double b);
+
+// unit tests
+void testVectorAdd();
+void testVectorSub();
+void testDotProduct();
+void testScalarMult();
+void testMatVecMult();
+void testMatMatMult();
+void testAllFunctions();
+
+void printMatrix(const Matrix& matrix, const string& matrixName);
+void printVector(const Vector& vector, const string& vectorName);
 
 #endif //COURSEWORK_LINEARALGEBRA_H

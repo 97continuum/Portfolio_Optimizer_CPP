@@ -3,80 +3,84 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "csv.h"  // Assuming you have a Csv class defined somewhere
+#include "csv.h"
+#include "linearAlgebra.h"
 
-double string_to_double(const std::string& s) {
+using namespace std;
+
+double string_to_double(const string& s) {
     try {
-        return std::stod(s);
-    } catch (const std::invalid_argument& e) {
-        std::cerr << "Invalid argument: " << e.what() << std::endl;
+        return stod(s);
+    } catch (const invalid_argument& e) {
+        cerr << "Invalid argument: " << e.what() << endl;
         return 0.0;
-    } catch (const std::out_of_range& e) {
-        std::cerr << "Out of range: " << e.what() << std::endl;
+    } catch (const out_of_range& e) {
+        cerr << "Out of range: " << e.what() << endl;
         return 0.0;
     }
 }
 
-void readData(double **data, const std::string& fileName) {
-    std::cout << "Attempting to open file: " << fileName << std::endl;
+void readData(Matrix& data, const string& fileName) {
+    //cout << "Attempting to open file: " << fileName << endl;
 
-    std::ifstream file(fileName);
+    ifstream file(fileName);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << fileName << std::endl;
+        cerr << "Failed to open file: " << fileName << endl;
         return;
     }
 
     Csv csv(file);
-    std::string line;
+    string line;
     int i = 0;
     while (csv.getline(line) != 0) {
         for (int j = 0; j < csv.getnfield(); j++) {
             double temp = string_to_double(csv.getfield(j));
-            data[j][i] = temp;
+            //data[j][i] = temp;
+            data[i][j] = temp;
         }
         i++;
     }
     file.close();
-    std::cout << "File read successfully: " << fileName << std::endl;
+    //cout << "File read successfully: " << fileName << endl;
 }
 
-bool changeWorkingDirectory(const std::string& newDir) {
+bool changeWorkingDirectory(const string& newDir) {
     if (chdir(newDir.c_str()) != 0)
     {
         perror("chdir() error");
-        std::cerr << "Failed to change working directory to: " << newDir << std::endl;
+        cerr << "Failed to change working directory to: " << newDir << endl;
         return false;
     }
     else
     {
-        std::cout << "Successfully changed working directory to: " << newDir << std::endl;
+        //cout << "Successfully changed working directory to: " << newDir << endl;
         return true;
     }
 }
 
-bool checkFileInCurrentDirectory(const std::string& fileName) {
+bool checkFileInCurrentDirectory(const string& fileName) {
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd)) != nullptr) {
-        std::cout << "Current working dir: " << cwd << std::endl;
+        cout << "Current working dir: " << cwd << endl;
     } else {
         perror("getcwd() error");
         return false;
     }
 
-    std::string fullPath = std::string(cwd) + "/" + fileName;
-    std::ifstream file(fullPath);
+    string fullPath = string(cwd) + "/" + fileName;
+    ifstream file(fullPath);
     if (!file) {
-        std::cerr << "File " << fullPath << " does not exist." << std::endl;
+        cerr << "File " << fullPath << " does not exist." << endl;
         return false;
     } else {
-        std::cout << "File " << fullPath << " exists" << std::endl;
+        //cout << "File " << fullPath << " exists" << endl;
     }
     file.close();
     return true;
 }
 
-std::vector<std::vector<double>> convertToVectorMatrix(double **returnMatrix, int numberAssets, int numberReturns) {
-    std::vector<std::vector<double>> vectorMatrix(numberAssets, std::vector<double>(numberReturns));
+Matrix convertToVectorMatrix(double **returnMatrix, int numberAssets, int numberReturns) {
+    Matrix vectorMatrix(numberAssets, Vector(numberReturns));
 
     for (int i = 0; i < numberAssets; ++i) {
         for (int j = 0; j < numberReturns; ++j) {
@@ -92,5 +96,5 @@ void deleteDoublePointer(double** matrix, int numberRows) {
         delete[] matrix[i];
     }
     delete[] matrix;
-    std::cout << "Deleted Memory" << std::endl;
+    cout << "Deleted Memory" << endl;
 }

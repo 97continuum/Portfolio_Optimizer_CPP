@@ -9,41 +9,90 @@
 #include <sstream>
 #include "csv.h"
 #include "read_data.h"
-#include "parameter_estimation.h"
 #include "linearAlgebra.h"
-#include "unitTests.h"
 #include "portfolio.h"
+
+using namespace std;
 
 int  main (int  argc, char  *argv[])
 {
-    std::string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
-    changeWorkingDirectory(desiredDirectory); // Change to Correct Working Directory
-
-    // Initialize Variables
     int numberAssets = 83; // Initialize Number of Assets
     int numberReturns = 700; // Max Length of Returns Data
-    auto **returnMatrix = new double*[numberAssets]; // a matrix to store the return data
-    //allocate memory for return data
-    for(int i=0;i<numberAssets;i++)
-        returnMatrix[i]=new double[numberReturns];
+    // Set list of increasing target Portfolio Returns
+    const int steps = 20;
+    double temp[steps];
+    double start = 0.005;
+    double end = 0.1;
+    double increment = (end - start) / (steps - 1);
+    // Backtesting Parameters
+    double epsilon = 1e-7;
+    int isWindow = 100;
+    int oosWindow = 12;
+    int slidingWindow = 12;
+    int numOfSlidingWindows = 1 + ((numberReturns - isWindow - oosWindow) / (slidingWindow));
 
-    //read the data from the file and store it into the return matrix
-    std::string fileName = "data/asset_returns.csv";
+    vector<Portfolios> TargetReturnsPortfolios;
+    string desiredDirectory = "/Users/talhajamal/Desktop/Code/Portfolio_Optimizer_CPP"; // Home Directory
+    changeWorkingDirectory(desiredDirectory); // Change to Correct Working Directory
+    string fileName = "data/asset_returns.csv"; // Return Data FileName
     checkFileInCurrentDirectory(fileName); // Check if File Exists and File Path is correct
+
+    Matrix returnMatrix;
+    returnMatrix.resize(numberReturns);
+    for(int i=0;i<numberReturns;i++)
+        returnMatrix[i].resize(numberAssets);
     readData(returnMatrix,fileName); // Read return data from the file and store in 2D returnMatrix
-    // Convert to vector of vectors
-    std::vector<std::vector<double>> returns = convertToVectorMatrix(returnMatrix, numberAssets, numberReturns);
-    //testAllFunctions(); // Test Linear Algebra Functions
 
-    // Instantiate Portfolio Object
-    double targetReturns = 0.10;
-    Portfolio portfolio(returns, targetReturns, 10, numberReturns);
+    for (int i = 0; i < steps; ++i) {temp[i] = start + i * increment;}
+    Vector tReturns(temp, temp + steps);
 
-    std::vector<double> portfolioMeanReturns = portfolio.calculateMeanReturn(); // Calculate mean returns
-    std::vector< std::vector<double> > portfolioCovMatrix = portfolio.calculateCovarianceMatrix(); // Calculate Cov Matrix
-    portfolio.printCovMatrix(); // Print Covariance Matrix
+    ofstream returnsFile; // Create CSV File to send returns to
+    ofstream covFile; // Create CSV File to send covariances to
+    returnsFile.open("data/returns.csv");
+    covFile.open("data/covariances.csv");
+    returnsFile << "Target Returns,";
+    covFile << "Target Returns,";
+    for (int i = 0; i < numOfSlidingWindows - 1; ++i)
+    {
+        returnsFile << "Backtest Period: " << i+1 << ",";
+        covFile << "Backtest Period: " << i+1 << ",";
+    }
+    returnsFile << "Backtest Period: " << numOfSlidingWindows << endl;
+    covFile << "Backtest Period: " << numOfSlidingWindows << endl;
 
-    // Delete Memory from Double Pointer
-    deleteDoublePointer(returnMatrix, numberAssets);
+    for (int i = 0; i < 20; i++)
+    {
+        cout << "=================================================================" << endl;
+        cout << "Running a Backtest for Portfolio with Target Returns of : " << tReturns[i] << endl;
+        Portfolios portfolio(isWindow, oosWindow, slidingWindow, numOfSlidingWindows, returnMatrix, tReturns[i]);
+        portfolio.calculateIsMean();
+        portfolio.calculateIsCovMat();
+        portfolio.calculateOOSMean();
+        portfolio.calculateOOSCovMatrix();
+        portfolio.calculateQ();
+        portfolio.optimizer(epsilon);
+        portfolio.runBacktest();
+        TargetReturnsPortfolios.push_back(portfolio);
+
+        // Results
+        Vector actualAvgReturn = portfolio.getVectorOfActualAverageReturn();
+        Vector actualCovMat = portfolio.getVectorOfActualCovMatrix();
+        cout << "Portfolio's Actual Average Return is: " << portfolio.getAvgReturnPerBacktest() << endl;
+        cout << "Portfolio's Actual Average Covariance is: " << portfolio.getAvgCovPerBacktest() << endl;
+        cout << "Portfolio's Sharpe Ratio is: " << portfolio.getPortfolioSharpeRatio() << endl;
+
+        returnsFile << tReturns[i]*100 << ",";
+        covFile << tReturns[i]*100 << ",";
+        for (int j = 0; j < actualAvgReturn.size()-1; j++)
+        {
+            returnsFile << actualAvgReturn[j]*100 << ",";
+        }
+        returnsFile << actualAvgReturn[actualAvgReturn.size()-1] << endl;
+        for (int k = 0; k < actualCovMat.size()-1; k++)
+        {
+            covFile << actualCovMat[k]*100 << ",";
+        }
+        covFile << actualCovMat[actualCovMat.size()-1] << endl;
+    }
     return 0;
 }

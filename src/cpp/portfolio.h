@@ -6,26 +6,87 @@
 #define COURSEWORK_PORTFOLIO_H
 
 #include <iostream>
+#include "linearAlgebra.h"
 
-class Portfolio {
+using namespace std;
+
+Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end);
+Vector calculateAverage(const Matrix& m);
+Matrix calculateCovMatrix(const Matrix& m, Vector meanReturns);
+double calculateAverage(const std::vector<double>& avgReturns);
+double calculateVariance(const std::vector<double>& avgReturns);
+
+class BacktestingEngine {
 public:
-    Portfolio(const std::vector< std::vector<double> >& returns, double targetReturn, int numAssets, int numPeriods);
+    BacktestingEngine(int isWindow_,int oosWindow_,int slidingWindow_,int numOfSlidingWindows_,
+                      const Matrix& AssetReturns_, double targetReturn_);
+    // IS Functions
+    void calculateIsMean();
+    void calculateIsCovMat();
+    void calculateQ();
+    void optimizer(double epsilon);
 
-    std::vector<double> calculateMeanReturn(); // Function to calculate
-    std::vector< std::vector<double> > calculateCovarianceMatrix(); // function to calculate Covariance Matrix
-    std::vector<double> solveOptimization(); // Function to create Qx = b systems of linear equations
-    void printCovMatrix();
+    void setb(double targetReturn_)
+    {
+        targetReturn = targetReturn_;
+        Vector b(numAssets, 0.0);
+        b.push_back(-targetReturn);
+        b.push_back(-1);
+        isb = b;
+    }
 
-private:
-    std::vector< std::vector<double> > returns; // Matrix to Store Returns
-    double targetReturn; // Variable to hold Target Return for Portfolio
-    int numAssets; // Total Number of Assets
-    int numPeriods; // Total Number of Periods
-    std::vector<double> meanReturns; // The vector of Mean Returns for N Assets
-    std::vector< std::vector<double> > covarianceMatrix; // Variance Covariance Matrix for N Assets
-    std::vector<double> conjugateGradient(const std::vector<std::vector<double>> &Q, const std::vector<double> &b,
-                                          const std::vector<double> &x0); // Function to solve Qx = b equation
+    // OOS Functions
+    void calculateOOSMean();
+    void calculateOOSCovMatrix();
+
+    // Get Methods
+    Matrix getISMean();
+    vector<Matrix> getISCovMat();
+    Matrix getOSMean();
+    vector<Matrix> getOSCovMat();
+    vector<Matrix> getQ();
+    Matrix getWeights();
+
+    // Destructor
+    ~BacktestingEngine();
+
+protected:
+    int isWindow, oosWindow, slidingWindow, numOfSlidingWindows;;
+    Matrix AssetReturns;
+    size_t numAssets, numReturns;
+
+    // OOS Variables
+    Matrix oosMean;
+    vector<Matrix> oosCovMatrix;
+
+    // IS Variables - including variables needed for Portfolio Optimization
+    double targetReturn;
+    Vector isb, isLambda, isMu;
+    Matrix isMean, isWeights, X;
+    vector<Matrix> isCovMatrix, Q;
 };
 
+class Portfolios : public BacktestingEngine {
+public:
+    Portfolios(int isWindow_, int oosWindow_, int slidingWindow_, int numOfSlidingWindows_,
+               const Matrix& AssetReturns_, double targetReturn_);
+
+    void runBacktest();
+    double getStd();
+    double getPortfolioSharpeRatio() const;
+    double getAvgReturnPerBacktest();
+    double getAvgCovPerBacktest();
+    Vector getVectorOfActualAverageReturn();
+    Vector getVectorOfActualCovMatrix();
+protected:
+    double avgReturn;
+    double avgCovariance;
+    double avgReturnPerBacktest;
+    double avgCovPerBacktest;
+    double standardDeviation{};
+    double portfolioSharpeRatio{};
+    Vector vectorOfAverageReturn;
+    Vector vectorOfAverageCov;
+};
 
 #endif //COURSEWORK_PORTFOLIO_H
