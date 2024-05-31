@@ -23,6 +23,24 @@ Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end)
     return submatrix;
 }
 
+// Function to calculate the mean of a vector
+double calculateAverage(const std::vector<double>& avgReturns) {
+    double sum = accumulate(avgReturns.begin(), avgReturns.end(), 0.0);
+    return sum / avgReturns.size();
+}
+
+// Function to calculate the variance of a vector
+double calculateVariance(const std::vector<double>& avgReturns) {
+    double mean = calculateAverage(avgReturns);
+    double variance = 0.0;
+
+    for (const double& return_value : avgReturns) {
+        variance += pow(return_value - mean, 2);
+    }
+
+    return variance / avgReturns.size();
+}
+
 Vector calculateAverage(const Matrix& m)
 {
     if (m.empty()){return {};}
@@ -89,11 +107,6 @@ Matrix BacktestingEngine::getWeights() { return isWeights;};
 
 // Destructor for Backtesting Engine Class
 BacktestingEngine::~BacktestingEngine() = default;
-
-// Constructor for Portfolios Class
-Portfolios::Portfolios(int isWindow_, int oosWindow_, int slidingWindow_, int numOfSlidingWindows_,
-                       const Matrix& AssetReturns_, double targetReturn_)
-        : BacktestingEngine(isWindow_, oosWindow_, slidingWindow_, numOfSlidingWindows_, AssetReturns_, targetReturn_) {}
 
 void BacktestingEngine::calculateIsMean()
 {
@@ -242,29 +255,34 @@ void BacktestingEngine::optimizer(double epsilon)
     }
 }
 
+// Constructor for Portfolios Class
+Portfolios::Portfolios(int isWindow_, int oosWindow_, int slidingWindow_, int numOfSlidingWindows_,
+                       const Matrix& AssetReturns_, double targetReturn_)
+        : BacktestingEngine(isWindow_, oosWindow_, slidingWindow_, numOfSlidingWindows_, AssetReturns_, targetReturn_) {}
+
 void Portfolios::runBacktest()
 {
-    avgAbnormalReturn = 0.0;
-    cumulativeAvgAbnormalReturn = 0.0;
+    avgReturn = 0.0;
+    avgCovariance = 0.0;
     double variance = 0.0;
     for (int i = 0; i < numOfSlidingWindows; i++)
     {
-        actualAverageReturn.push_back(isWeights[i] * oosMean[i]); // Actual Average Return for Each Backtest Period
-        actualCovMatrix.push_back(isWeights[i] * (isCovMatrix[i] * isWeights[i]));// Actual Cov Matrix for each Backtest
-        avgAbnormalReturn = ((i * avgAbnormalReturn) + actualAverageReturn[i]) / (i + 1);
-        cumulativeAvgAbnormalReturn += isWeights[i] * oosMean[i];
+        avgReturn = isWeights[i] * oosMean[i];
+        vectorOfAverageReturn.push_back(avgReturn); // Actual Average Return for Each Backtest Period
+        avgCovariance = isWeights[i] * (isCovMatrix[i] * isWeights[i]);
+        vectorOfAverageCov.push_back(avgCovariance);// Actual Cov Matrix for each Backtest
     }
-    for (int j = 0; j < numOfSlidingWindows; j++)
-    {
-        variance += pow((isWeights[j] * oosMean[j]) - avgAbnormalReturn, 2.0);
-    }
-    standardDeviation = sqrt(variance/numOfSlidingWindows);
-    portfolioSharpeRatio = avgAbnormalReturn / standardDeviation;
+    // Calculate Average Return & Cov per backtest period
+    avgReturnPerBacktest = calculateAverage(vectorOfAverageReturn);
+    avgCovPerBacktest = calculateAverage(vectorOfAverageCov);
+    standardDeviation = sqrt(calculateVariance(vectorOfAverageReturn)/numOfSlidingWindows); // calculate standard deviation
+    portfolioSharpeRatio = (calculateAverage(vectorOfAverageReturn) - 0) / standardDeviation; // risk free rate = 0
 }
 
-Vector Portfolios::getActualAverageReturn(){ return actualAverageReturn;}
-Vector Portfolios::getActualCovMatrix(){ return actualCovMatrix;};
-double Portfolios::getAvgAbnormalReturn(){ return avgAbnormalReturn;};
-double Portfolios::getCumulativeAvgAbnormalReturn(){ return cumulativeAvgAbnormalReturn;};
-double Portfolios::getStd(){return standardDeviation;};
-double Portfolios::getPortfolioSharpeRatio() const {return portfolioSharpeRatio;}
+// Get Methods
+double Portfolios::getAvgReturnPerBacktest(){ return avgReturnPerBacktest;};
+double Portfolios::getAvgCovPerBacktest(){ return avgCovPerBacktest;};
+Vector Portfolios::getVectorOfActualAverageReturn(){ return vectorOfAverageReturn;}
+Vector Portfolios::getVectorOfActualCovMatrix(){ return vectorOfAverageCov;};
+double Portfolios::getStd(){ return standardDeviation;};
+double Portfolios::getPortfolioSharpeRatio() const { return portfolioSharpeRatio;}

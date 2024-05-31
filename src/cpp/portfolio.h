@@ -13,6 +13,8 @@ using namespace std;
 Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end);
 Vector calculateAverage(const Matrix& m);
 Matrix calculateCovMatrix(const Matrix& m, Vector meanReturns);
+double calculateAverage(const std::vector<double>& avgReturns);
+double calculateVariance(const std::vector<double>& avgReturns);
 
 class BacktestingEngine {
 public:
@@ -70,19 +72,21 @@ public:
                const Matrix& AssetReturns_, double targetReturn_);
 
     void runBacktest();
-    Vector getActualAverageReturn();
-    Vector getActualCovMatrix();
-    double getAvgAbnormalReturn();
-    double getCumulativeAvgAbnormalReturn();
     double getStd();
     double getPortfolioSharpeRatio() const;
+    double getAvgReturnPerBacktest();
+    double getAvgCovPerBacktest();
+    Vector getVectorOfActualAverageReturn();
+    Vector getVectorOfActualCovMatrix();
 protected:
-    Vector actualAverageReturn;
-    Vector actualCovMatrix;
-    double avgAbnormalReturn;
-    double cumulativeAvgAbnormalReturn;
-    double standardDeviation;
-    double portfolioSharpeRatio;
+    double avgReturn;
+    double avgCovariance;
+    double avgReturnPerBacktest;
+    double avgCovPerBacktest;
+    double standardDeviation{};
+    double portfolioSharpeRatio{};
+    Vector vectorOfAverageReturn;
+    Vector vectorOfAverageCov;
 };
 
 #endif //COURSEWORK_PORTFOLIO_H

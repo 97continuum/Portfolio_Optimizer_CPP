@@ -89,7 +89,6 @@ int Csv::advplain(const string& s, string& fld, int i)
 	return j;
 }
 
-
 // getfield: return n-th field
 string Csv::getfield(int n)
 {
