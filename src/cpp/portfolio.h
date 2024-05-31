@@ -79,8 +79,8 @@ public:
     Vector getVectorOfActualAverageReturn();
     Vector getVectorOfActualCovMatrix();
 protected:
-    double avgReturn;
-    double avgCovariance;
+    double portfolio_return;
+    double portfolio_covariance;
     double avgReturnPerBacktest;
     double avgCovPerBacktest;
     double standardDeviation{};

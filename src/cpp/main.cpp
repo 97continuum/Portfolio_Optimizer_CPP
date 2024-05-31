@@ -18,12 +18,14 @@ int  main (int  argc, char  *argv[])
 {
     int numberAssets = 83; // Initialize Number of Assets
     int numberReturns = 700; // Max Length of Returns Data
+
     // Set list of increasing target Portfolio Returns
     const int steps = 20;
     double temp[steps];
     double start = 0.005;
     double end = 0.1;
     double increment = (end - start) / (steps - 1);
+
     // Backtesting Parameters
     double epsilon = 1e-7;
     int isWindow = 100;
@@ -48,10 +50,11 @@ int  main (int  argc, char  *argv[])
 
     ofstream returnsFile; // Create CSV File to send returns to
     ofstream covFile; // Create CSV File to send covariances to
-    returnsFile.open("data/returns.csv");
-    covFile.open("data/covariances.csv");
+    returnsFile.open("data/results/PortfolioReturns.csv");
+    covFile.open("data/results/Covariances.csv");
     returnsFile << "Target Returns,";
     covFile << "Target Returns,";
+
     for (int i = 0; i < numOfSlidingWindows - 1; ++i)
     {
         returnsFile << "Backtest Period: " << i+1 << ",";
@@ -62,6 +65,7 @@ int  main (int  argc, char  *argv[])
 
     for (int i = 0; i < 20; i++)
     {
+        // Run backtest for current target return
         cout << "=================================================================" << endl;
         cout << "Running a Backtest for Portfolio with Target Returns of : " << tReturns[i] << endl;
         Portfolios portfolio(isWindow, oosWindow, slidingWindow, numOfSlidingWindows, returnMatrix, tReturns[i]);
@@ -78,19 +82,20 @@ int  main (int  argc, char  *argv[])
         Vector actualAvgReturn = portfolio.getVectorOfActualAverageReturn();
         Vector actualCovMat = portfolio.getVectorOfActualCovMatrix();
         cout << "Portfolio's Actual Average Return is: " << portfolio.getAvgReturnPerBacktest() << endl;
-        cout << "Portfolio's Actual Average Covariance is: " << portfolio.getAvgCovPerBacktest() << endl;
+        cout << "Portfolio's Actual Average Covariance is: " << portfolio.getAvgCovPerBacktest()<< endl;
         cout << "Portfolio's Sharpe Ratio is: " << portfolio.getPortfolioSharpeRatio() << endl;
 
-        returnsFile << tReturns[i]*100 << ",";
-        covFile << tReturns[i]*100 << ",";
+        // Push Results to CSV
+        returnsFile << tReturns[i] << ",";
+        covFile << tReturns[i] << ",";
         for (int j = 0; j < actualAvgReturn.size()-1; j++)
         {
-            returnsFile << actualAvgReturn[j]*100 << ",";
+            returnsFile << actualAvgReturn[j] << ",";
         }
         returnsFile << actualAvgReturn[actualAvgReturn.size()-1] << endl;
         for (int k = 0; k < actualCovMat.size()-1; k++)
         {
-            covFile << actualCovMat[k]*100 << ",";
+            covFile << actualCovMat[k] << ",";
         }
         covFile << actualCovMat[actualCovMat.size()-1] << endl;
     }

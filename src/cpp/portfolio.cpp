@@ -5,7 +5,6 @@
 #include <numeric>
 #include "portfolio.h"
 #include "linearAlgebra.h"
-#include <stdexcept>
 #include <cmath>
 
 using namespace std;
@@ -249,20 +248,17 @@ Portfolios::Portfolios(int isWindow_, int oosWindow_, int slidingWindow_, int nu
 
 void Portfolios::runBacktest()
 {
-    avgReturn = 0.0;
-    avgCovariance = 0.0;
-    double variance = 0.0;
     for (int i = 0; i < numOfSlidingWindows; i++)
     {
-        avgReturn = isWeights[i] * oosMean[i];
-        vectorOfAverageReturn.push_back(avgReturn); // Actual Average Return for Each Backtest Period
-        avgCovariance = isWeights[i] * (isCovMatrix[i] * isWeights[i]);
-        vectorOfAverageCov.push_back(avgCovariance);// Actual Cov Matrix for each Backtest
+        portfolio_return = isWeights[i] * oosMean[i];
+        vectorOfAverageReturn.push_back(portfolio_return); // Actual Average Return for Each Backtest Period
+        portfolio_covariance = isWeights[i] * (isCovMatrix[i] * isWeights[i]);
+        vectorOfAverageCov.push_back(portfolio_covariance);// Actual Cov Matrix for each Backtest
     }
     // Calculate Average Return & Cov per backtest period
     avgReturnPerBacktest = calculateAverage(vectorOfAverageReturn);
     avgCovPerBacktest = calculateAverage(vectorOfAverageCov);
-    standardDeviation = sqrt(calculateVariance(vectorOfAverageReturn)/numOfSlidingWindows); // calculate standard deviation
+    standardDeviation = sqrt(calculateVariance(vectorOfAverageReturn)); // calculate standard deviation
     portfolioSharpeRatio = (calculateAverage(vectorOfAverageReturn) - 0) / standardDeviation; // risk free rate = 0
 }
 
