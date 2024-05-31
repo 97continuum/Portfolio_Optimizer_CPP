@@ -74,10 +74,11 @@ public:
     void runBacktest();
     double getStd();
     double getPortfolioSharpeRatio() const;
-    double getAvgReturnPerBacktest();
-    double getAvgCovPerBacktest();
+    double getAvgReturnPerBacktest() const;
+    double getAvgCovPerBacktest() const;
     Vector getVectorOfActualAverageReturn();
     Vector getVectorOfActualCovMatrix();
+    bool validateResults(const Matrix& Q, const Vector& x, const Vector& b, double tolerance = 1e-6);
 protected:
     double portfolio_return;
     double portfolio_covariance;

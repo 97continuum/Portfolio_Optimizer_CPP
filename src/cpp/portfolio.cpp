@@ -187,6 +187,39 @@ void BacktestingEngine::calculateQ() {
     }
 }
 
+// Function to calculate the Euclidean norm of a vector
+double vectorNorm(const Vector& v) {
+    double sum = 0.0;
+    for (double value : v) {
+        sum += value * value;
+    }
+    return std::sqrt(sum);
+}
+// Function to validate results from the Conjugate Gradient Method
+bool validateResults(const Matrix& Q, const Vector& x, const Vector& b, double tolerance = 1e-3) {
+    // Calculate Qx
+    Vector Qx = Q * x;
+
+    // Calculate the residual vector r = Qx - b
+    Vector residual = Qx - b;
+
+    // Calculate the norm of the residual vector
+    double residualNorm = vectorNorm(residual);
+
+    // Calculate the norm of b for relative residual
+    double bNorm = vectorNorm(b);
+
+    // Calculate the relative residual
+    double relativeResidual = residualNorm / (bNorm + 1e-10); // Adding a small value to avoid division by zero
+
+    // Print residuals for debugging purposes
+    //std::cout << "Residual Norm: " << residualNorm << std::endl;
+    //std::cout << "Relative Residual: " << relativeResidual << std::endl;
+
+    // Check if the relative residual is within the specified tolerance
+    return relativeResidual <= tolerance;
+}
+
 void BacktestingEngine::optimizer(double epsilon)
 {
     Vector  s_k, s_k1, p_k, p_k1, Qp, alphaQp, weights;
@@ -227,6 +260,17 @@ void BacktestingEngine::optimizer(double epsilon)
             s_k = s_k1;
             p_k = p_k1;
         }
+
+        // Validate the solution x0
+        if (validateResults(Q[i], x0, isb))
+        {
+           // std::cout << "Validation successful for window " << i << std::endl;
+        }
+        else
+        {
+            std::cerr << "Validation failed for window " << i << std::endl;
+        }
+
         //printVector(x0, "x0");
         X.push_back(x0);
         for (int j = 0; j < x0.size()-2; j++)
@@ -263,8 +307,8 @@ void Portfolios::runBacktest()
 }
 
 // Get Methods
-double Portfolios::getAvgReturnPerBacktest(){ return avgReturnPerBacktest;};
-double Portfolios::getAvgCovPerBacktest(){ return avgCovPerBacktest;};
+double Portfolios::getAvgReturnPerBacktest() const{ return avgReturnPerBacktest;};
+double Portfolios::getAvgCovPerBacktest() const{ return avgCovPerBacktest;};
 Vector Portfolios::getVectorOfActualAverageReturn(){ return vectorOfAverageReturn;}
 Vector Portfolios::getVectorOfActualCovMatrix(){ return vectorOfAverageCov;};
 double Portfolios::getStd(){ return standardDeviation;};

@@ -27,7 +27,7 @@ int  main (int  argc, char  *argv[])
     double increment = (end - start) / (steps - 1);
 
     // Backtesting Parameters
-    double epsilon = 1e-7;
+    double epsilon = 1e-6;
     int isWindow = 100;
     int oosWindow = 12;
     int slidingWindow = 12;
