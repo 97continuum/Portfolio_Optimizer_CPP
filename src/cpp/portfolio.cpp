@@ -27,6 +27,7 @@ double calculateVariance(const std::vector<double>& avgReturns) {
     return variance / avgReturns.size();
 }
 
+// Function to calculate the Average per column within a Matrix and return a Vector
 Vector calculateAverage(const Matrix& m)
 {
     if (m.empty()){return {};}
@@ -49,6 +50,7 @@ Vector calculateAverage(const Matrix& m)
     return result;
 }
 
+// Function to calculate a Cov Matrix
 Matrix calculateCovMatrix(const Matrix& m, Vector meanReturns)
 {
     size_t numCols = m[0].size();
