@@ -103,6 +103,7 @@ Matrix operator+(const Matrix& a, const Matrix& b)
     return result;
 }
 
+// Matrix Subtraction
 Matrix operator-(const Matrix& a, const Matrix& b)
 {
     Matrix result;
@@ -118,6 +119,7 @@ Matrix operator-(const Matrix& a, const Matrix& b)
     return result;
 }
 
+// Matrix Scalar Multiplication
 Matrix operator*(const Matrix& a, double b)
 {
     Matrix result;
@@ -133,6 +135,7 @@ Matrix operator*(const Matrix& a, double b)
     return result;
 }
 
+// Matrix Matrix Multiplication
 Matrix operator*(const Matrix& A, const Matrix& B)
 {
     size_t n = A.size(); // Number of rows in A
@@ -157,6 +160,7 @@ Matrix operator*(const Matrix& A, const Matrix& B)
     return result;
 }
 
+//Matrix Scalar Division
 Matrix operator/(const Matrix& a, double b)
 {
     Matrix result;
