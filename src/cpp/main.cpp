@@ -2,14 +2,8 @@
 // Created by Talha Jamal on 19/05/2024.
 //
 #include <iostream>
-#include <unistd.h>
-#include <stdio.h>
 #include <fstream>
-#include <stdlib.h>
-#include <sstream>
-#include "csv.h"
 #include "read_data.h"
-#include "linearAlgebra.h"
 #include "portfolio.h"
 
 using namespace std;

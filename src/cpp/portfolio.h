@@ -10,7 +10,8 @@
 
 using namespace std;
 
-Matrix sliceMatrixByRows(const Matrix& matrix, int row_start, int row_end);
+bool validateResults(const Matrix& Q, const Vector& x, const Vector& b, double tolerance);
+
 Vector calculateAverage(const Matrix& m);
 Matrix calculateCovMatrix(const Matrix& m, Vector meanReturns);
 double calculateAverage(const std::vector<double>& avgReturns);
@@ -78,7 +79,6 @@ public:
     double getAvgCovPerBacktest() const;
     Vector getVectorOfActualAverageReturn();
     Vector getVectorOfActualCovMatrix();
-    bool validateResults(const Matrix& Q, const Vector& x, const Vector& b, double tolerance = 1e-6);
 protected:
     double portfolio_return;
     double portfolio_covariance;
