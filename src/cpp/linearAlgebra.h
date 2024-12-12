@@ -1,7 +1,3 @@
-//
-// Created by Talha Jamal on 20/05/2024.
-//
-
 #ifndef COURSEWORK_LINEARALGEBRA_H
 #define COURSEWORK_LINEARALGEBRA_H
 
