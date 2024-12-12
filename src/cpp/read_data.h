@@ -1,7 +1,3 @@
-//
-// Created by Talha Jamal on 19/05/2024.
-//
-
 #ifndef COURSEWORK_READ_DATA_H
 #define COURSEWORK_READ_DATA_H
 
