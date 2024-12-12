@@ -1,6 +1,3 @@
-//
-// Created by Talha Jamal on 20/05/2024.
-//
 #include "linearAlgebra.h"
 #include <vector>
 
