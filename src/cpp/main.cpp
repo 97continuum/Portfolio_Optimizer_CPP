@@ -1,6 +1,3 @@
-//
-// Created by Talha Jamal on 19/05/2024.
-//
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
