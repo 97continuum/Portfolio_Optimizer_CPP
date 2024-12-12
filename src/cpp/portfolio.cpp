@@ -1,7 +1,3 @@
-//
-// Created by Talha Jamal on 20/05/2024.
-//
-
 #include <numeric>
 #include "portfolio.h"
 #include "linearAlgebra.h"
